@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 Portfolio • Your Name</title>
+  <meta name="description" content="Projects for CS180/280A — computer vision portfolio." />
+
+  <style>
+    /* ---------- Theme ---------- */
+    :root {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb;
+        --bg-soft: #fff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #335dff;
+        --accent-2: #0fb99d;
+        --ring: rgba(51,93,255,.35);
+        --shadow: 0 10px 24px rgba(2,6,23,.08);
+      }
+    }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 12px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px;
+    }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 10px 14px; border-radius: 12px; font-weight: 600;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .btn:hover { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white; border: 0; box-shadow: 0 10px 20px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      display: grid; gap: 18px; padding: 36px 0 18px;
+    }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+    .sub {
+      color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6;
+    }
+
+    /* ---------- Projects Grid ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+    .card {
+      grid-column: span 12;
+      display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
+      background: var(--card); overflow: hidden; box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+      box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
+    }
+    .thumb {
+      position: relative; background:
+        linear-gradient(135deg, color-mix(in oklab, var(--accent) 30%, transparent),
+                                color-mix(in oklab, var(--accent-2) 22%, transparent));
+      display: grid; place-items: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 999px;
+      background: color-mix(in oklab, var(--bg) 40%, transparent); color: var(--text);
+      border: 1px solid color-mix(in oklab, var(--text) 18%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .content { padding: 14px 14px 16px; display: grid; gap: 8px; }
+    .title { font-weight: 750; font-size: 18px; }
+    .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      font-size: 12px; color: var(--muted);
+      border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent);
+      padding: 4px 8px; border-radius: 999px;
+    }
+
+    @media (min-width: 640px) { .card { grid-column: span 6; } }
+    @media (min-width: 1024px) { .card { grid-column: span 4; } }
+
+    /* ---------- Footer ---------- */
+    footer {
+      margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      font-size: 14px;
+    }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>CS180 Portfolio</span>
+      </div>
+      <nav class="nav-links">
+        <a class="btn" href="#projects">Projects</a>
+        <!-- Optional: point to a PDF in your repo -->
+        <a class="btn" href="./resume.pdf">Resume</a>
+        <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="title">
+      <span class="eyebrow">UC Berkeley • CS180/280A</span>
+      <h1 id="title">Computer Vision projects by <em>Your Name</em></h1>
+      <p class="sub">
+        A lightweight showcase of assignments and writeups. Each card links to a subpage
+        (e.g., <code>./1/</code>) with results, methodology, and media.
+      </p>
+    </section>
+
+    <section id="projects" aria-label="Projects" style="margin-top: 10px;">
+      <div class="grid">
+        <!-- Project 1 -->
+        <a class="card" href="./1/" aria-label="Open Project 1">
+          <div class="thumb">
+            <!-- Put a cover image at ./1/media/cover.jpg if you like -->
+            <img src="./1/media/cover.jpg" alt="" onerror="this.style.display='none'">
+            <span class="badge">Project 1</span>
+          </div>
+          <div class="content">
+            <div class="title">Edge Detection & Filtering</div>
+            <p class="desc">Implementing convolution, Gaussian smoothing, and Canny-style edge detection.</p>
+            <div class="meta">
+              <span class="tag">Python</span><span class="tag">NumPy</span><span class="tag">Image Processing</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a class="card" href="./2/">
+          <div class="thumb">
+            <img src="./2/media/cover.jpg" alt="" onerror="this.style.display='none'">
+            <span class="badge">Project 2</span>
+          </div>
+          <div class="content">
+            <div class="title">Image Pyramids & Blending</div>
+            <p class="desc">Laplacian and Gaussian pyramids for seamless blending and multi-scale analysis.</p>
+            <div class="meta">
+              <span class="tag">Python</span><span class="tag">Pyramids</span><span class="tag">Blending</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a class="card" href="./3/">
+          <div class="thumb">
+            <img src="./3/media/cover.jpg" alt="" onerror="this.style.display='none'">
+            <span class="badge">Project 3</span>
+          </div>
+          <div class="content">
+            <div class="title">Feature Detection & Matching</div>
+            <p class="desc">Harris corners, descriptors, and RANSAC homographies for panorama stitching.</p>
+            <div class="meta">
+              <span class="tag">CV</span><span class="tag">RANSAC</span><span class="tag">SIFT-like</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Duplicate/modify the card below to add more projects -->
+        <!--
+        <a class="card" href="./4/">
+          <div class="thumb"><img src="./4/media/cover.jpg" alt="" onerror="this.style.display='none'"><span class="badge">Project 4</span></div>
+          <div class="content">
+            <div class="title">Neural Style Transfer</div>
+            <p class="desc">Optimizing content/style losses to synthesize painterly images.</p>
+            <div class="meta"><span class="tag">PyTorch</span><span class="tag">Optimization</span></div>
+          </div>
+        </a>
+        -->
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Your Name</span>
+        <span>Built with HTML & CSS • Hosted on GitHub Pages</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Persisted light/dark toggle
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      // Year in footer
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
