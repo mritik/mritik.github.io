@@ -176,11 +176,11 @@
 
   <main class="container">
     <section class="hero" aria-labelledby="title">
-      <span class="eyebrow">Project 0 • UC Berkeley • CS180</span>
+      <span class="eyebrow">Project 0 • CS180</span>
       <h1 id="title">Becoming Friends with Your Camera</h1>
       <p class="sub">
-        Exploring how camera <em>distance</em> shapes perspective, why “compression” happens in long shots,
-        and how to pull off a classic <strong>dolly zoom</strong>.
+        Exploring the effects of camera distance on perspective, why a compression-like effect happens in long shots,
+        and creating a dolly zoom.
       </p>
     </section>
 
@@ -192,20 +192,130 @@
           <div class="content">
             <div class="title">What’s on this page</div>
             <ul class="desc">
-              <li>Part 1 — Selfie: close vs. far (same face size) and why the far one looks better.</li>
-              <li>Part 2 — Architecture: perspective “compression” from longer distances.</li>
-              <li>Part 3 — Dolly Zoom: moving back while zooming in, with a GIF result.</li>
+              <li>Part 1 — Picture: Close vs Far</li>
+              <li>Part 2 — Architecture: Perspective Compression from further distances</li>
+              <li>Part 3 — Dolly Zoom</li>
             </ul>
-            <p class="desc" style="margin-top:4px">
-              Assets live in <code>./media/</code>:
-              <code>selfie_close.jpg</code>, <code>selfie_far.jpg</code>,
-              <code>arch_zoom.jpg</code>, <code>arch_walk.jpg</code>,
-              <code>dolly.gif</code> (or <code>dolly.mp4</code>).
-            </p>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Part 1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 1</span></div>
+          <div class="content">
+            <div class="title">Selfie — Close vs Far (same face size)</div>
+            <p class="desc">
+              Two portraits with the face kept the same size: (A) close + wide vs. (B) farther + zoomed.
+              Close distance exaggerates near features; stepping back restores natural proportions.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./TheoClose.jpg" alt="Close, wide selfie causing distortion" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Close + wide → distortion</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./TheoZoom.jpg" alt="Farther, zoomed portrait with natural proportions" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Farther + zoom → natural look</figcaption>
+              </figure>
+            </div>
+
+            <h3 style="margin:14px 0 6px">Why</h3>
+            <ul class="desc">
+              <li><strong>Perspective comes from distance.</strong> The closer the camera, the bigger near features appear.</li>
+              <li>Focal length changes field of view; moving the camera changes geometry.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2</span></div>
+          <div class="content">
+            <div class="title">Architecture — Perspective Compression</div>
+            <p class="desc">
+              Same scene framed similarly: (A) far + zoom vs. (B) close + wide. The distant viewpoint reduces
+              relative depth differences so the scene looks “flatter”.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./PathZoom.jpg" alt="Zoomed-from-afar path shot showing compression" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Far + zoom → compressed spacing</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./PathClose.jpg" alt="Walked-forward wide shot with stronger perspective" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Close + wide → strong convergence</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 3</span></div>
+          <div class="content">
+            <div class="title">The Dolly Zoom</div>
+            <p class="desc">
+              I moved the camera back while zooming in to keep subject size constant. Foreground stays similar,
+              background perspective changes dramatically.
+            </p>
+
+            <figure style="margin:10px 0 0">
+              <img src="./180_dolly_zoom.gif" alt="Animated dolly zoom GIF" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px">Animated result (GIF).</figcaption>
+            </figure>
+
+            <h3 style="margin:14px 0 6px">Procedure</h3>
+            <ol class="desc" style="padding-left:18px">
+              <li>Frame the subject; note a reference (eyes/object edge).</li>
+              <li>Step back 10–20%, zoom in to keep size, capture a frame. Repeat 6–10×.</li>
+              <li>Assemble frames into a GIF/video.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Chris Dodla</span>
+        <span>Project 0 • CS180</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
 
     <!-- Part 1 -->
     <section style="margin-top:14px">
