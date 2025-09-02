@@ -6,6 +6,16 @@
   <title>CS180 • Project 0 — Chris Dodla</title>
   <meta name="description" content="Project 0: Becoming Friends with Your Camera — perspective, compression, and the dolly zoom." />
 
+  <!-- Apply saved theme before CSS to avoid mismatch/flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
   <style>
     /* ---------- Theme ---------- */
     :root {
@@ -21,7 +31,7 @@
       --radius: 16px;
       --maxw: 1100px;
     }
-    
+
     /* System preference */
     @media (prefers-color-scheme: light) {
       :root {
@@ -36,7 +46,8 @@
         --shadow: 0 10px 24px rgba(2,6,23,.08);
       }
     }
-    
+
+    /* Manual overrides (must be AFTER the media block) */
     :root[data-theme="dark"] {
       --bg: #0b0c10;
       --bg-soft: #111218;
@@ -48,7 +59,6 @@
       --ring: rgba(124,156,255,.5);
       --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    
     :root[data-theme="light"] {
       --bg: #f7f8fb;
       --bg-soft: #fff;
@@ -60,7 +70,6 @@
       --ring: rgba(51,93,255,.35);
       --shadow: 0 10px 24px rgba(2,6,23,.08);
     }
-    
     [data-theme="light"] { color-scheme: light; }
     [data-theme="dark"]  { color-scheme: dark; }
 
@@ -77,30 +86,7 @@
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
 
-    .container {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 24px;
-    }
-
-    /* ---------- Base ---------- */
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
-                  linear-gradient(180deg, var(--bg-soft), var(--bg));
-      color: var(--text);
-    }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-
-    .container {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 24px;
-    }
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
 
     /* ---------- Header ---------- */
     header {
@@ -109,13 +95,8 @@
       background: color-mix(in oklab, var(--bg) 75%, transparent);
       border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
     }
-    .nav {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 12px 0;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px;
-    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px; }
     .logo {
       width: 28px; height: 28px; border-radius: 8px;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -135,9 +116,7 @@
     .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
 
     /* ---------- Hero ---------- */
-    .hero {
-      display: grid; gap: 18px; padding: 36px 0 18px;
-    }
+    .hero { display: grid; gap: 18px; padding: 36px 0 18px; }
     .eyebrow {
       display: inline-flex; gap: 8px; align-items: center;
       padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
@@ -147,16 +126,10 @@
       width: fit-content;
     }
     h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
-    .sub {
-      color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6;
-    }
+    .sub { color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6; }
 
     /* ---------- Grid & Cards ---------- */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 18px;
-    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
     .card {
       grid-column: span 12;
       display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
@@ -170,9 +143,10 @@
       box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
     }
     .thumb {
-      position: relative; background:
-        linear-gradient(135deg, color-mix(in oklab, var(--accent) 30%, transparent),
-                                color-mix(in oklab, var(--accent-2) 22%, transparent));
+      position: relative;
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--accent) 30%, transparent),
+        color-mix(in oklab, var(--accent-2) 22%, transparent));
       display: grid; place-items: center;
     }
     .thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -187,21 +161,14 @@
     .title { font-weight: 750; font-size: 18px; }
     .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
     .meta { display: flex; gap: 8px; flex-wrap: wrap; }
-    .tag {
-      font-size: 12px; color: var(--muted);
-      border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent);
-      padding: 4px 8px; border-radius: 999px;
-    }
+    .tag { font-size: 12px; color: var(--muted); border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent); padding: 4px 8px; border-radius: 999px; }
 
     @media (min-width: 640px) { .card { grid-column: span 6; } }
     @media (min-width: 1024px) { .card { grid-column: span 4; } }
 
     /* ---------- Footer ---------- */
-    footer {
-      margin-top: 36px; padding: 24px 0; color: var(--muted);
-      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
-      font-size: 14px;
-    }
+    footer { margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size: 14px; }
     .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   </style>
 </head>
