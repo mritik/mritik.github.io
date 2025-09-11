@@ -192,8 +192,13 @@
       <span class="eyebrow">Project 1 • CS180</span>
       <h1 id="title">Colorizing the Prokudin-Gorskii photo collection</h1>
       <p class="sub">
-        Stacked and aligned color channel images to produce color images from the Prokudin-Gorskii photo collection. Optimized exhaustive search to use an image pyramid to improve alignment and for speedups.
+        I stacked and aligned color channel images to produce color images from the Prokudin-Gorskii photo collection. Then I had to optimize my exhaustive search over the radius of displacements to use an image pyramid to improve alignment and for speedups.
+        Originally, the images in the collection looked like this:
       </p>
+        <figure style="margin:0">
+          <img src="./outputs/cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+          <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Original RGB channel images of the Cathedral </figcaption>
+        </figure>
     </section>
 
     <!-- Overview / Deliverables -->
@@ -220,22 +225,25 @@
         <div class="card" style="grid-column: span 12">
           <div class="thumb"><span class="badge">Part 1</span></div>
           <div class="content">
-            <div class="title">Selfie: The Wrong Way vs. The Right Way</div>
+            <div class="title">Small Images + Exhaustive Search</div>
             <p class="desc">
-              Two portraits with the face kept the same size: (A) Close vs (B) Farther + Zoomed.
+              Creating color images for the small jpg images in the Prokudin-Gorskii collection.
               <br>
-              The reason that the second picture looks better is because of a perspective effect due to the distance from the camera and subject. Objects closer to the camera look disproportionately larger when taking a picture up close but when we step back, 
-              we're shrinking the relative size differences between different parts of the face which makes proportions look more natural. 
+              How did I do this:
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./TheoClose.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Close + Wide</figcaption>
+                <img src="./outputs/pyramid_and_border_aligned_cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Cathedral </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./TheoZoom.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Farther + Zoom</figcaption>
+                <img src="./outputs/pyramid_and_border_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Monastery </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_and_border_aligned_tobolsk" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Tobolsk </figcaption>
               </figure>
             </div>
 
