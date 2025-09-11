@@ -192,7 +192,10 @@
       <span class="eyebrow">Project 1 • CS180</span>
       <h1 id="title">Colorizing the Prokudin-Gorskii photo collection</h1>
       <p class="sub">
-        I stacked and aligned color channel images to produce color images from the Prokudin-Gorskii photo collection. Then I had to optimize my exhaustive search over the radius of displacements to use an image pyramid to improve alignment and for speedups.
+        
+        The goal of this project was to reconstruct full color images from glass plate images part of the Prokudin-Gorskii collection. 
+        Each glass plate image contains a blue, green, and red exposure stacked vertically. By extracting these channels and aligning them correctly, we can form a coherent full color image. 
+        My goal is to find the correct alignment between channels, especially for large high-resolution scans where naive approaches are slow or inaccurate.
         Originally, the images in the collection looked like this:
       </p>
         <figure style="margin:0">
@@ -210,9 +213,8 @@
             <div class="title">What’s on this page</div>
             <ul class="desc">
               <li>Part 1 — Small Images + Exhaustive Search</li>
-              <li>Part 2 — Larger Images + Exhaustive Search </li>
-              <li>Part 3 — Larger Images + Image Pyramid</li>
-              <li>Part 4 — Cropped Borders + Extra Images</li>
+              <li>Part 2 — Larger Images + Image Pyramid</li>
+              <li>Part 3 — Cropped Borders + Extra Images</li>
             </ul>
           </div>
         </div>
@@ -227,23 +229,25 @@
           <div class="content">
             <div class="title">Small Images + Exhaustive Search</div>
             <p class="desc">
-              Creating color images for the small jpg images in the Prokudin-Gorskii collection.
-              <br>
-              How did I do this:
+              I began by experimenting on smaller .jpg images, where exhaustive search is feasible. 
+              Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel. 
+              To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
+              I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
+              This produced pretty good results on small images like cathedral.jpg and monastery.jpg.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/pyramid_and_border_aligned_cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Cathedral </figcaption>
+                <img src="./outputs/exhaustive_aligned_cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Cathedral </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/pyramid_and_border_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Monastery </figcaption>
+                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Monastery </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/pyramid_and_border_aligned_tobolsk" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Tobolsk </figcaption>
+                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Tobolsk </figcaption>
               </figure>
             </div>
 
@@ -258,23 +262,22 @@
         <div class="card" style="grid-column: span 12">
           <div class="thumb"><span class="badge">Part 2</span></div>
           <div class="content">
-            <div class="title">Architecture — Perspective Compression</div>
+            <div class="title">Larger Images + Image Pyramid</div>
             <p class="desc">
-              Same scene framed in two different ways: (A) Far + Zoom vs (B) Close + Wide. 
-              <br>
-              The distant viewpoint has a background that looks more compressed.
-              From far away and zooming, near and far parts of the street are almost equally distant from the camera (less relative distance), so depth cues flatten and the scene looks compressed.
-              As you walk closer, the distance difference between foreground and background grows, and the perspective causes the background to recede and the foreground to feel larger.
+              For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. 
+              To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
+              I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales. 
+              This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./PathZoom.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Far + Zoom</figcaption>
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Emir </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./PathClose.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>B.</strong> Close + Wide</figcaption>
+                <img src="./outputs/pyramid_aligned_harvesters.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Harvesters </figcaption>
               </figure>
             </div>
           </div>
@@ -288,10 +291,12 @@
         <div class="card" style="grid-column: span 12">
           <div class="thumb"><span class="badge">Part 3</span></div>
           <div class="content">
-            <div class="title">The Dolly Zoom</div>
+            <div class="title">Cropped Borders + Extra Images</div>
             <p class="desc">
-              I moved the camera back while zooming in to keep subject size the same. The foreground stays similar,
-              but the background changes substantially.
+              After alignment, many images still had colored borders caused by misaligned edges of the glass plates. 
+              To solve this, I cropped the images using the computed shifts to retain only the overlapping region where all three channels align. 
+              I then applied an additional fixed margin crop to clean up residual black or blurred edges. 
+              This step helped produce cleaner final results. You can find all the final images below:
             </p>
 
             <figure style="margin:10px 0 0">
