@@ -210,21 +210,29 @@
       </div>
     </section>
 
-    <!-- Intro -->
+   <!-- Intro -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <p class="sub">
-            The goal of this project was to reconstruct full color images from glass plate images part of the Prokudin-Gorskii collection. 
-            Each glass plate image contains a blue, green, and red exposure stacked vertically. By extracting these channels and aligning them correctly, we can form a coherent full color image. 
-            My goal is to find the correct alignment between channels, especially for large high-resolution scans where naive approaches are slow or inaccurate.
-            Originally, the images in the collection looked like this:
-          </p>
-        <figure style="margin:0">
-          <img src="./outputs/cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-          <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Original RGB channel images of the Cathedral </figcaption>
-        </figure>
-
+          <div class="content">
+            <p class="sub">
+              The goal of this project was to reconstruct full color images from glass plate images part of the Prokudin-Gorskii collection. 
+              Each glass plate image contains a blue, green, and red exposure stacked vertically. By extracting these channels and aligning them correctly, we can form a coherent full color image. 
+              My goal is to find the correct alignment between channels, especially for large high-resolution scans where naive approaches are slow or inaccurate.
+            </p>
+            <p class="sub">
+              Originally, the images in the collection looked like this:
+            </p>
+    
+            <figure style="margin:12px 0; text-align:center">
+              <img src="./outputs/cathedral.jpg" alt="Original RGB channels" 
+                   style="border-radius:12px; max-width:100%; height:auto" 
+                   onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px">
+                <strong>A.</strong> Original RGB channel images of the Cathedral
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
@@ -267,8 +275,8 @@
           <div class="content">
             <div class="title">Larger Images + Image Pyramid</div>
             <p class="desc">
-              For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. 
-              To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
+              For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. My original radius of 15 pixels that I would search also became
+              too small to find the true offset which caused poor alignment (like in the emir image). To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
               I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales. 
               This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
 
