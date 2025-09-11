@@ -233,21 +233,17 @@
               Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel. 
               To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
               I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
-              This produced pretty good results on small images like cathedral.jpg and monastery.jpg.
+              This produced pretty good results on small images like monastery.jpg and tobolsk.jpg.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Cathedral </figcaption>
-              </figure>
-              <figure style="margin:0">
                 <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Monastery </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Tobolsk </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
               </figure>
             </div>
 
@@ -268,16 +264,31 @@
               To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
               I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales. 
               This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
+
+              Below are two examples showing the exhaustive search method on the large tiff images:
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Emir </figcaption>
+                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_harvesters.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Harvesters </figcaption>
+                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+              </figure>
+            </div>
+
+            <p>Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
               </figure>
             </div>
           </div>
