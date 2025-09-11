@@ -191,17 +191,6 @@
     <section class="hero" aria-labelledby="title">
       <span class="eyebrow">Project 1 • CS180</span>
       <h1 id="title">Colorizing the Prokudin-Gorskii photo collection</h1>
-      <p class="sub">
-        
-        The goal of this project was to reconstruct full color images from glass plate images part of the Prokudin-Gorskii collection. 
-        Each glass plate image contains a blue, green, and red exposure stacked vertically. By extracting these channels and aligning them correctly, we can form a coherent full color image. 
-        My goal is to find the correct alignment between channels, especially for large high-resolution scans where naive approaches are slow or inaccurate.
-        Originally, the images in the collection looked like this:
-      </p>
-        <figure style="margin:0">
-          <img src="./outputs/cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-          <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Original RGB channel images of the Cathedral </figcaption>
-        </figure>
     </section>
 
     <!-- Overview / Deliverables -->
@@ -221,6 +210,24 @@
       </div>
     </section>
 
+    <!-- Intro -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <p class="sub">
+            The goal of this project was to reconstruct full color images from glass plate images part of the Prokudin-Gorskii collection. 
+            Each glass plate image contains a blue, green, and red exposure stacked vertically. By extracting these channels and aligning them correctly, we can form a coherent full color image. 
+            My goal is to find the correct alignment between channels, especially for large high-resolution scans where naive approaches are slow or inaccurate.
+            Originally, the images in the collection looked like this:
+          </p>
+        <figure style="margin:0">
+          <img src="./outputs/cathedral.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+          <figcaption class="desc" style="margin-top:6px"><strong>A.</strong> Original RGB channel images of the Cathedral </figcaption>
+        </figure>
+
+        </div>
+      </div>
+    </section>
     <!-- Part 1 -->
     <section style="margin-top:14px">
       <div class="grid">
