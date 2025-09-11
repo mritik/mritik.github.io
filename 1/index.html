@@ -222,7 +222,7 @@
               part of the Prokudin-Gorskii collection. Each glass plate image contains a blue, green, 
               and red exposure stacked vertically. By extracting these channels and aligning them correctly, 
               we can form a coherent full color image. My goal is to find the correct alignment between channels, 
-              especially for large high-resolution scans where naive approaches are slow or inaccurate.
+              especially for large high-resolution scans where naive approaches are slow or inaccurate. Below is an example of the original data:
             </p>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
@@ -244,7 +244,7 @@
           <div class="content">
             <div class="title">Small Images + Exhaustive Search</div>
             <p class="desc">
-              I began by experimenting on smaller .jpg images, where exhaustive search is feasible. 
+              I began by experimenting on smaller .jpg images, where exhaustive search over the displacements is feasible. 
               Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel. 
               To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
               I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
