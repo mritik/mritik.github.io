@@ -214,31 +214,28 @@
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Introduction</span></div>
           <div class="content">
-            <p class="sub">
+            <div class="title">Intro</div>
+            <p class="desc">
               The goal of this project was to reconstruct full color images from glass plate images 
               part of the Prokudin-Gorskii collection. Each glass plate image contains a blue, green, 
               and red exposure stacked vertically. By extracting these channels and aligning them correctly, 
               we can form a coherent full color image. My goal is to find the correct alignment between channels, 
               especially for large high-resolution scans where naive approaches are slow or inaccurate.
             </p>
-    
-            <p class="sub">
-              Originally, the images in the collection looked like this:
-            </p>
-    
-            <figure style="margin:12px 0; text-align:center">
-              <img src="./outputs/cathedral.jpg" alt="Original RGB channels" 
-                   style="border-radius:12px; max-width:100%; height:auto" 
-                   onerror="this.style.display='none'">
-              <figcaption class="desc" style="margin-top:6px">
-                <strong>A.</strong> Original RGB channel images of the Cathedral
-              </figcaption>
-            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/cathedral.jpg" alt="Original RGB channels" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+              </figure>
+            </div>
+
           </div>
         </div>
       </div>
     </section>
+    
     <!-- Part 1 -->
     <section style="margin-top:14px">
       <div class="grid">
@@ -348,8 +345,8 @@
         </figure>
     
         <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_itaili.jpg" alt="Itaili" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>4.</strong> Itaili</figcaption>
+          <img src="./outputs/pyramid_and_border_aligned_itailil.jpg" alt="Itailil" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>4.</strong> Itailil</figcaption>
         </figure>
 
         <figure style="grid-column: span 6; margin:0">
