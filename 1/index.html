@@ -277,7 +277,8 @@
             <p class="desc">
               For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. My original radius of 15 pixels that I would search also became
               too small to find the true offset which caused poor alignment (like in the emir image). To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
-              I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales. 
+              I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales, doubling the estimate at each step. 
+              To keep NCC from latching onto borders, I score it on a center crop of the overlapping region and I cropped more aggressively at coarse levels.
               This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
 
               Below are two examples showing the exhaustive search method on the large tiff images:
@@ -317,12 +318,10 @@
         <div class="card" style="grid-column: span 12">
           <div class="thumb"><span class="badge">Part 3</span></div>
           <div class="content">
-            <div class="title">Cropped Borders + Extra Images</div>
+            <div class="title">Cropped Borders + Extra Images and Improvements</div>
             <p class="desc">
               After alignment, many images still had colored borders caused by misaligned edges of the glass plates.
-              To solve this, I cropped the images using the computed shifts to retain only the overlapping region where all three channels align. This guarantees that every pixel in the final RGB image
-              has valid data from all three channels but also causes the loss of some image area along the edges.
-              I then applied an additional fixed margin crop to clean up residual black or blurred edges. 
+              To solve this, I applied an additional fixed margin crop to clean up residual black or blurred edges. 
               This step helped produce cleaner final results. You can find all the final images below:
             </p>
           </div>
@@ -336,18 +335,13 @@
         </figure>
 
         <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_emir_real.jpg" alt="Emir" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>2.</strong> Emir: G to B Displacement (49, 24), R to B Displacement (110, -444)</figcaption>
+          <img src="./outputs/pyramid_and_border_aligned_emir.jpg" alt="Emir" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>2.</strong> Emir: G to B Displacement (49, 24), R to B Displacement (104, 56)</figcaption>
         </figure>
 
         <figure style="grid-column: span 6; margin:0">
           <img src="./outputs/pyramid_and_border_aligned_monastery.jpg" alt="Monastery" style="border-radius:12px; width:100%">
           <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>3.</strong> Monastery: G to B Displacement (-3, 2), R to B Displacement (3, 2)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_emir.jpg" alt="Emir" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>2.</strong> Improved Emir: G to B Displacement (49, 24), R to B Displacement (104, 56)</figcaption>
         </figure>
     
         <figure style="grid-column: span 6; margin:0">
