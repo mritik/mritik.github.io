@@ -245,7 +245,7 @@
             <div class="title">Small Images + Exhaustive Search</div>
             <p class="desc">
               I began by experimenting on smaller .jpg images, where exhaustive search over the displacements is feasible. 
-              Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel. 
+              Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel (G -> B and R-> B). 
               To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
               I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
               This produced pretty good results on small images like monastery.jpg and tobolsk.jpg.
@@ -278,9 +278,9 @@
               For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. My original radius of 15 pixels that I would search also became
               too small to find the true offset which caused poor alignment (like in the emir image). To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
               I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales, doubling the estimate at each step. 
-              To keep NCC from latching onto borders, I score it on a center crop of the overlapping region and I cropped more aggressively at coarse levels.
+              To keep NCC from being confused by messy borders, I score it only on a center crop of the overlapping region and I cropped more aggressively at coarse levels.
               This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
-
+ 
               Below are two examples showing the exhaustive search method on the large tiff images:
             </p>
 
