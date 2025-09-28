@@ -290,6 +290,7 @@
 
             <p class="desc">
               Next, I applied the humble finite difference dx and dy filters to the grayscaled original image using my 2 loop convolve function. The dx filter detects horizontal edges, while the dy filter detects vertical edges.
+              I made sure to normalize after my convolution to ensure clear results.
             </p>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
@@ -317,17 +318,33 @@
           <div class="content">
             <div class="title">Finite Difference Operator</div>
             <p class="desc">
-              Placeholder Explanations
+              In this part, I tried to compute the gradient magnitude and edge map of the cameraman image using the dx and dy filters. 
+              The gradient magnitude is computed as the square root of the dx convolution squared + the dy convolution squared. 
+              I computed the edge map by setting a threshold for the gradient magnitude and outputting a binary image. 
+              I decided to use an adaptive threshold for flexibility and I settled on 0.95 (picking the top 5% of gradients). 
+              A higher threshold would result in fewer real edges being detected and a lower threshold would cause more noise to be included.
+              I tested a couple different thresholds from 80th percentile to 99th percentile and decided that I got the best results around 95th. 
+
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+                <img src="./cameraman_gx.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
+                <img src="./cameraman_gy.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmag.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edges.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
               </figure>
             </div>
 
@@ -344,17 +361,59 @@
           <div class="content">
             <div class="title">Derivative of Gaussian (DoG) Filter</div>
             <p class="desc">
-              Placeholder Explanations
+              I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
+              help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
+
+              1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
+              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities. 
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+                <img src="./cameraman_gxGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
+                <img src="./cameraman_gyGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmagGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edgesGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              2) With the second method, I attempted to get the same result with a singular convolution instead of two. I convolved the Gaussian filter with the Dx and Dy filters to create a derivative of Gaussian
+              (DoG) filter. I then applied the DoG filter to the original image and got the resulting grad mag and edge map. We can see that, using the same threshold, these images look identical to those generated
+              with the first method.
+            </p>
+
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gx_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gy_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmag_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edges_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
               </figure>
             </div>
 
