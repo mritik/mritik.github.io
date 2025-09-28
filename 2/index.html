@@ -323,7 +323,7 @@
               I computed the edge map by setting a threshold for the gradient magnitude and outputting a binary image. 
               I decided to use an adaptive threshold for flexibility and I settled on 0.95 (picking the top 5% of gradients). 
               A higher threshold would result in fewer real edges being detected and a lower threshold would cause more noise to be included.
-              I tested a couple different thresholds from 80th percentile to 99th percentile and decided that I got the best results around 95th. 
+              I tested a couple different thresholds from 80th percentile to 99th percentile and decided that I preserved the relevant edges while eliminating most noise at 95th.
 
             </p>
 
