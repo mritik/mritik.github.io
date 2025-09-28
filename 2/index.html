@@ -629,18 +629,94 @@
                 <figcaption class="desc" style="margin-top:6px"><strong></strong> Hybrid Dutmeg (Derek + Nutmeg) </figcaption>
             </figure>
             
-            <p class="desc">Below are some more examples on my own images, one of which showcases the full process with the Fourier Transforms.</p>
+            <p class="desc">Below are some more examples on my own images, one of which showcases the full process with the Fourier Transforms.
+            First, we have John Denero + Michael Ball = JBall
+            
+            </p>
             
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+                <img src="./denero2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original John Denero </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+                <img src="./mball.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Michael Ball </figcaption>
               </figure>
             </div>
+
+            <figure style="margin:0">
+              <img src="./denero_mball_hybrid.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong></strong> Hybrid JBall </figcaption>
+            </figure>
+
+            <p class="desc">
+            Some improvements and additional design choices that I made were to zero mean the high pass image and clip only at the very end, instead of clipping after each convolution. 
+            Zero meaning the high pass ensured that any color/brightness biases wouldn't affect my resulting image. 
+            Next, we have a cute baby panda and baby lion merged together. I include the full process for this with aligned images, fourier transforms, and filtered results.
+            </p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./babyPanda.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Panda </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./babyLion.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Lion </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./panda_aligned.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Aligned Panda </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./lion_aligned.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Aligned Lion </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./panda_low.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Panda (Low Frequency) </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./lion_high.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lion (High Frequency) </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./fft_panda_input.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Panda Input Fourier </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./fft_lion_input.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lion Input Fourier </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./fft_panda_low.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Panda Low Freq Fourier </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./fft_lion_high.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lion High Freq Fourier </figcaption>
+              </figure>
+            </div>
+
+            <figure style="margin:0">
+              <img src="./panda_lion_hybrid.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong></strong> Hybrid Landa </figcaption>
+            </figure>
+          
+            
           </div>
         </div>
       </div>
