@@ -443,11 +443,11 @@
             <p class="desc">
               The goal for image sharpening is to enhance the high frequency components of our image. My steps for accomplishing this were to 1) Use a Gaussian filter (convolve with image) to get a blurred version of the image and 2) Subtract the blurred image from the original image. 
               The extent to which we want to sharpen our image is controlled by the alpha parameter in our formula. We see that alpha controls how much of the high frequency component we are adding back to the original image, so a higher alpha corresponds to a sharper image.
-
+              <br>
               The primary design choices I made for this task were deciding the size of the guassian kernel I wanted to use and the alpha parameter. Originally, I elected to use a 9x9 gaussian kernel.
               However, this was causing a halo effect and shadows/rims along some of the edges. This led me to re-evaluate and I adjusted to a 3x3 kernel which produced much better cleaner results.
               The alpha parameter was chosen through experimentation and looping through a range of plausible values.
-              
+              <br>
               Below, we have the image, the blurred image, the high frequency components, and the final sharpened image:
             </p>
 
@@ -503,7 +503,7 @@
               This is because sharpening an image can only amplify the existing high-frequency components (if those components are entirely missing then we can't amplify them).
               This causes us to boost mid frequencies and the blur's transitions, which results in more outlining and less detail and genuine sharpness than the left image. 
               However, we notice that the sharpened image is still a substantial improvement from the blurry image.
-
+              <br>
               The results are below:
             </p>
 
@@ -600,16 +600,16 @@
               The parameter σ controls the amount of blurring: larger σ values smooth the image more, removing fine detail, while smaller σ values preserve more of the original structure. 
               The high-frequency components were obtained, similar to earlier, by subtracting a Gaussian-blurred version of the second image from the original, ensuring that only the fine detail information remained. 
               I then combined the low-pass and high-pass results, using weighting factors to balance their contributions, in order to form the final hybrid image.
-
+              <br>
               A key part of this task was aligning the images, since misalignment can cause distracting artifacts. 
               I used the provided starter code to select corresponding points, recenter and rescale the images, rotate one image to match the other, and crop them so that both had the same dimensions. 
               Once aligned, the two images could be more easily combined. 
-
+              <br>
               The perceptual effect of the hybrid depends on viewing distance. Up close, the high-frequency details dominate perception, so you mainly see the high-pass image. 
               From farther away, or when the image is reduced in size, the high frequencies are no longer visible, and the smooth low-frequency structure dominates, so you perceive the low-pass image instead. 
               My goal was to accentuate this shift in interpretation as much as possible. 
               I experimented with different cutoff values for the Gaussian filters and created several hybrids, including the Derek and Nutmeg (Dutmeg) example as well as my own image pairs. 
-
+              <br>
               Below was my initial attempt on Derek and Nutmeg:
             </p>
 
@@ -653,6 +653,7 @@
             <p class="desc">
             Some improvements and additional design choices that I made were to zero mean the high pass image and clip only at the very end, instead of clipping after each convolution. 
             Zero meaning the high pass ensured that any color/brightness biases wouldn't affect my resulting image. 
+            <br>
             Next, we have a cute baby panda and baby lion merged together. I include the full process for this with aligned images, fourier transforms, and filtered results.
             </p>
             
@@ -715,20 +716,18 @@
               <img src="./panda_lion_hybrid.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
               <figcaption class="desc" style="margin-top:6px"><strong></strong> Hybrid Landa </figcaption>
             </figure>
-          
-            
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Part 2.3 -->
+    <!-- Part 2.3 + 2.4 -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 2.3</span></div>
+          <div class="thumb"><span class="badge">Part 2.3 + 2.4</span></div>
           <div class="content">
-            <div class="title">Gaussian and Laplacian Stacks</div>
+            <div class="title">Gaussian and Laplacian Stacks and Multiresolution Blending</div>
             <p class="desc">
               Placeholder
             </p>
@@ -759,47 +758,7 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Part 2.4 -->
-    <section style="margin-top:14px">
-      <div class="grid">
-        <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 2.4</span></div>
-          <div class="content">
-            <div class="title">Multiresolution Blending (Oraple and more)</div>
-            <p class="desc">
-              Placeholder
-            </p>
-
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
-              </figure>
-            </div>
-
-            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
-            
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
-              </figure>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
+    </section>    
 
     <footer>
       <div class="footer-row container">
