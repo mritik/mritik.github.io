@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 • Project 2 — Chris Dodla</title>
+  <meta name="description" content="Project 2: Fun with Filters and Frequencies" />
+
+  <!-- Apply saved theme before CSS to avoid mismatch/flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ---------- Theme ---------- */
+    :root {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+
+    /* System preference */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb;
+        --bg-soft: #fff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #335dff;
+        --accent-2: #0fb99d;
+        --ring: rgba(51,93,255,.35);
+        --shadow: 0 10px 24px rgba(2,6,23,.08);
+      }
+    }
+
+    /* Manual overrides (must be AFTER the media block) */
+    :root[data-theme="dark"] {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f7f8fb;
+      --bg-soft: #fff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #335dff;
+      --accent-2: #0fb99d;
+      --ring: rgba(51,93,255,.35);
+      --shadow: 0 10px 24px rgba(2,6,23,.08);
+    }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px; }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 10px 14px; border-radius: 12px; font-weight: 600;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .btn:hover { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white; border: 0; box-shadow: 0 10px 20px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* ---------- Hero ---------- */
+    .hero { display: grid; gap: 18px; padding: 36px 0 18px; }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+    .sub { color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6; }
+
+    /* ---------- Grid & Cards ---------- */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card {
+      grid-column: span 12;
+      display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
+      background: var(--card); overflow: hidden; box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+      box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
+    }
+    .thumb {
+      position: relative;
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--accent) 30%, transparent),
+        color-mix(in oklab, var(--accent-2) 22%, transparent));
+      display: grid; place-items: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 999px;
+      background: color-mix(in oklab, var(--bg) 40%, transparent); color: var(--text);
+      border: 1px solid color-mix(in oklab, var(--text) 18%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .content { padding: 14px 14px 16px; display: grid; gap: 8px; }
+    .title { font-weight: 750; font-size: 18px; }
+    .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent); padding: 4px 8px; border-radius: 999px; }
+
+    @media (min-width: 640px) { .card { grid-column: span 6; } }
+    @media (min-width: 1024px) { .card { grid-column: span 4; } }
+
+    /* ---------- Footer ---------- */
+    footer { margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size: 14px; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>CS180 Portfolio</span>
+      </div>
+      <nav class="nav-links">
+        <a class="btn" href="../">← Back</a>
+        <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="title">
+      <span class="eyebrow">Project 2 • CS180</span>
+      <h1 id="title">Fun with Filters and Frequencies</h1>
+    </section>
+
+    <!-- Overview / Deliverables -->
+    <section style="margin-top:10px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Overview</span></div>
+          <div class="content">
+            <div class="title">What’s on this page</div>
+            <ul class="desc">
+              <li>Part 1.1 - </li>
+              <li>Part 1.2 — Larger Images + Image Pyramid</li>
+              <li>Part 1.3 — Cropped Borders + Extra Images</li>
+              <li>Part 2.1 — Cropped Borders + Extra Images</li>
+              <li>Part 2.2 — Cropped Borders + Extra Images</li>
+              <li>Part 2.3 — Cropped Borders + Extra Images</li>
+              <li>Part 2.4 — Cropped Borders + Extra Images</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Introduction</span></div>
+          <div class="content">
+            <div class="title">Intro</div>
+            <p class="desc">
+              The goal of this project was to reconstruct full color images from glass plate images 
+              part of the Prokudin-Gorskii collection. Each glass plate image contains a blue, green, 
+              and red exposure stacked vertically. By extracting these channels and aligning them correctly, 
+              we can form a coherent full color image. My goal is to find the correct alignment between channels, 
+              especially for large high-resolution scans where naive approaches are slow or inaccurate. Below is an example of the original data:
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/cathedral.jpg" alt="Original RGB channels" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Raw Plate Cathedral Images </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Part 1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 1</span></div>
+          <div class="content">
+            <div class="title">Small Images + Exhaustive Search</div>
+            <p class="desc">
+              I began by experimenting on smaller .jpg images, where exhaustive search over the displacements is feasible. 
+              Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel (G -> B and R-> B). 
+              To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
+              I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
+              This produced pretty good results on small images like monastery.jpg and tobolsk.jpg.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2</span></div>
+          <div class="content">
+            <div class="title">Larger Images + Image Pyramid</div>
+            <p class="desc">
+              For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. My original radius of 15 pixels that I would search also became
+              too small to find the true offset which caused poor alignment (like in the emir image). To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
+              I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales, doubling the estimate at each step. 
+              To keep NCC from being confused by messy borders, I score it only on a center crop of the overlapping region and I cropped more aggressively at coarse levels.
+              This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
+ 
+              Below are two examples showing the exhaustive search method on the large tiff images:
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 3</span></div>
+          <div class="content">
+            <div class="title">Cropped Borders + Extra Images and Improvements</div>
+            <p class="desc">
+              After alignment, many images still had colored borders caused by misaligned edges of the glass plates.
+              To solve this, I applied an additional fixed margin crop to clean up residual black or blurred edges. 
+              This step helped produce cleaner final results. You can find all the final images below:
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Image grid 2 per row -->
+      <div class="grid" style="margin-top:14px; gap:20px;">
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_cathedral.jpg" alt="Cathedral" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>1.</strong> Cathedral: G to B Displacement (5, 2), R to B Displacement (12, 3)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_emir.jpg" alt="Emir" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>2.</strong> Emir: G to B Displacement (49, 24), R to B Displacement (104, 56)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_monastery.jpg" alt="Monastery" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>3.</strong> Monastery: G to B Displacement (-3, 2), R to B Displacement (3, 2)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_italil.jpg" alt="Italil" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>4.</strong> Italil: G to B Displacement (38, 21), R to B Displacement (77, 35)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_church.jpg" alt="Church" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>5.</strong> Church: G to B Displacement (25, 4), R to B Displacement (58, -4)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_harvesters.jpg" alt="Harvesters" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>6.</strong> Harvesters: G to B Displacement (60, 17), R to B Displacement (124, 13)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_icon.jpg" alt="Icon" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>7.</strong> Icon: G to B Displacement (41, 17), R to B Displacement (89, 23)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_lastochikino.jpg" alt="Lastochikino" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>8.</strong> Lastochikino: G to B Displacement (-3, -2), R to B Displacement (75, -9)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_lugano.jpg" alt="Lugano" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>9.</strong> Lugano: G to B Displacement (41, -16), R to B Displacement (93, -29)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_melons.jpg" alt="Melons" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>10.</strong> Melons: G to B Displacement (82, 11), R to B Displacement (178, 13)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_self_portrait.jpg" alt="Self Portrait" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>11.</strong> Self Portrait: G to B Displacement (79, 29), R to B Displacement (176, 37)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_siren.jpg" alt="Aligned Siren" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>12.</strong> Aligned Siren: G to B Displacement (49, -6), R to B Displacement (96, -25)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_three_generations.jpg" alt="Three Generations" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>13.</strong> Three Generations: G to B Displacement (53, 14), R to B Displacement (111, 11)</figcaption>
+        </figure>
+    
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_tobolsk.jpg" alt="Tobolsk" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>14.</strong> Tobolsk: G to B Displacement (3, 3), R to B Displacement (6, 3)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_extraImg2.jpg" alt="Extra Image 1" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>15.</strong> Extra Image 1: G to B Displacement (40, 9), R to B Displacement (94, -7)</figcaption>
+        </figure>
+
+        <figure style="grid-column: span 6; margin:0">
+          <img src="./outputs/pyramid_and_border_aligned_extraImg3.jpg" alt="Extra Image 2" style="border-radius:12px; width:100%">
+          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>16.</strong> Extra Image 2: G to B Displacement (55, 35), R to B Displacement (124, 61)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Chris Dodla</span>
+        <span>Project 1 • CS180 @ https://mritik.github.io/1/</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
