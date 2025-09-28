@@ -265,7 +265,7 @@
             </div>
 
             <p class="desc">
-              As expected, the four-loop method to multiply and add up each kernel value with corresponding pixels is very inefficient. By taking slices of the padded image of the same size as the kernel
+              As expected, the four-loop method to multiply and add up each kernel value with corresponding pixels is very inefficient. In the two-loop method, by taking slices of the padded image of the same size as the kernel
               and computing the convolution with np.sum(curr * kernel), I'm utilizing Numpy's vectorized multiplication and sum, which speeds up the process by a factor of 6-7x. 
               However, using the scipy library and its built-in convolve2d function was even more efficient. This is due to it being implemented in C and runtime-optimized.     
 
