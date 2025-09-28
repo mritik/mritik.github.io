@@ -287,6 +287,20 @@
                 <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Two Loop Implementation </figcaption>
               </figure>
             </div>
+
+            <p class="desc">
+              Next, I applied the humble finite difference dx and dy filters to the grayscaled original image using my 2 loop convolve function. The dx filter detects horizontal edges, while the dy filter detects vertical edges.
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./xFiniteDiff.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./yFiniteDiff.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
             
 
           </div>
