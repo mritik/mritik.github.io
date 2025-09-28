@@ -201,13 +201,13 @@
           <div class="content">
             <div class="title">What’s on this page</div>
             <ul class="desc">
-              <li>Part 1.1 - </li>
-              <li>Part 1.2 — Larger Images + Image Pyramid</li>
-              <li>Part 1.3 — Cropped Borders + Extra Images</li>
-              <li>Part 2.1 — Cropped Borders + Extra Images</li>
-              <li>Part 2.2 — Cropped Borders + Extra Images</li>
-              <li>Part 2.3 — Cropped Borders + Extra Images</li>
-              <li>Part 2.4 — Cropped Borders + Extra Images</li>
+              <li>Part 1.1 - Convolutions from Scratch! </li>
+              <li>Part 1.2 — Finite Difference Operator </li>
+              <li>Part 1.3 — Derivative of Gaussian (DoG) Filter </li>
+              <li>Part 2.1 — Image "Sharpening" </li>
+              <li>Part 2.2 — Hybrid Images </li>
+              <li>Part 2.3 — Gaussian and Laplacian Stacks </li>
+              <li>Part 2.4 — Multiresolution Blending  </li>
             </ul>
           </div>
         </div>
@@ -222,37 +222,26 @@
           <div class="content">
             <div class="title">Intro</div>
             <p class="desc">
-              The goal of this project was to reconstruct full color images from glass plate images 
-              part of the Prokudin-Gorskii collection. Each glass plate image contains a blue, green, 
-              and red exposure stacked vertically. By extracting these channels and aligning them correctly, 
-              we can form a coherent full color image. My goal is to find the correct alignment between channels, 
-              especially for large high-resolution scans where naive approaches are slow or inaccurate. Below is an example of the original data:
+              The goal of this project was to implement and apply fundamental image processing techniques to explore how filters, edges, and frequency components shape visual perception. 
+              In Part 1, I build convolution functions from scratch, compare them with standard libraries, and analyze performance. 
+              Then, I compute image derivatives, gradients, and edge maps, while also constructing and applying Gaussian and Difference of Gaussian filters to study smoothing and edge detection. 
+              In Part 2, I extend these methods to practical applications: sharpening images with unsharp masking, creating hybrid images by combining low and high frequency components, 
+              and performing multiresolution blending using Gaussian and Laplacian stacks to seamlessly merge images. 
             </p>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./outputs/cathedral.jpg" alt="Original RGB channels" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Raw Plate Cathedral Images </figcaption>
-              </figure>
-            </div>
-
           </div>
         </div>
       </div>
     </section>
     
-    <!-- Part 1 -->
+    <!-- Part 1.1 -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 1</span></div>
+          <div class="thumb"><span class="badge">Part 1.1</span></div>
           <div class="content">
-            <div class="title">Small Images + Exhaustive Search</div>
+            <div class="title">Convolutions from Scratch</div>
             <p class="desc">
-              I began by experimenting on smaller .jpg images, where exhaustive search over the displacements is feasible. 
-              Each color channel (R, G, B) was separated, and the green and red channels were aligned to the blue channel (G -> B and R-> B). 
-              To score candidate shifts, I used Normalized Cross-Correlation (NCC), which measures the similarity between two patches after normalizing brightness. 
-              I would iterate over a displacement window (+/- 15 pixels), and then pick the shift with the highest NCC score. 
-              This produced pretty good results on small images like monastery.jpg and tobolsk.jpg.
+              Placeholder Explanations
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
@@ -271,21 +260,70 @@
       </div>
     </section>
 
-    <!-- Part 2 -->
+
+    <!-- Part 1.2 -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 2</span></div>
+          <div class="thumb"><span class="badge">Part 1.2</span></div>
           <div class="content">
-            <div class="title">Larger Images + Image Pyramid</div>
+            <div class="title">Finite Difference Operator</div>
             <p class="desc">
-              For larger .tif files, the offset was larger and an exhaustive search over a wide displacement range became too slow. My original radius of 15 pixels that I would search also became
-              too small to find the true offset which caused poor alignment (like in the emir image). To address this, I implemented a coarse-to-fine image pyramid approach where each channel was progressively downsampled into lower-resolution levels. 
-              I would align the coarsest (smallest) level, where exhaustive search is cheap, and then the shifts were refined at progressively finer (larger) scales, doubling the estimate at each step. 
-              To keep NCC from being confused by messy borders, I score it only on a center crop of the overlapping region and I cropped more aggressively at coarse levels.
-              This reduced the runtime on large images from a couple of minutes per image to just a few seconds and also improved alignment accuracy.
- 
-              Below are two examples showing the exhaustive search method on the large tiff images:
+              Placeholder Explanations
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 1.3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 1.3</span></div>
+          <div class="content">
+            <div class="title">Derivative of Gaussian (DoG) Filter</div>
+            <p class="desc">
+              Placeholder Explanations
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_monastery.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Monastery </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_tobolsk.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Tobolsk </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2.1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.1</span></div>
+          <div class="content">
+            <div class="title">Image Sharpening</div>
+            <p class="desc">
+              Placeholder
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
@@ -316,109 +354,128 @@
       </div>
     </section>
 
-    <!-- Part 3 -->
+    <!-- Part 2.2 -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 3</span></div>
+          <div class="thumb"><span class="badge">Part 2.2</span></div>
           <div class="content">
-            <div class="title">Cropped Borders + Extra Images and Improvements</div>
+            <div class="title">Hybrid Images</div>
             <p class="desc">
-              After alignment, many images still had colored borders caused by misaligned edges of the glass plates.
-              To solve this, I applied an additional fixed margin crop to clean up residual black or blurred edges. 
-              This step helped produce cleaner final results. You can find all the final images below:
+              Placeholder
             </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </div>
-      <!-- Image grid 2 per row -->
-      <div class="grid" style="margin-top:14px; gap:20px;">
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_cathedral.jpg" alt="Cathedral" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>1.</strong> Cathedral: G to B Displacement (5, 2), R to B Displacement (12, 3)</figcaption>
-        </figure>
+    </section>
 
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_emir.jpg" alt="Emir" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>2.</strong> Emir: G to B Displacement (49, 24), R to B Displacement (104, 56)</figcaption>
-        </figure>
+    <!-- Part 2.3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.3</span></div>
+          <div class="content">
+            <div class="title">Gaussian and Laplacian Stacks</div>
+            <p class="desc">
+              Placeholder
+            </p>
 
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_monastery.jpg" alt="Monastery" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>3.</strong> Monastery: G to B Displacement (-3, 2), R to B Displacement (3, 2)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_italil.jpg" alt="Italil" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>4.</strong> Italil: G to B Displacement (38, 21), R to B Displacement (77, 35)</figcaption>
-        </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+              </figure>
+            </div>
 
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_church.jpg" alt="Church" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>5.</strong> Church: G to B Displacement (25, 4), R to B Displacement (58, -4)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_harvesters.jpg" alt="Harvesters" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>6.</strong> Harvesters: G to B Displacement (60, 17), R to B Displacement (124, 13)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_icon.jpg" alt="Icon" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>7.</strong> Icon: G to B Displacement (41, 17), R to B Displacement (89, 23)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_lastochikino.jpg" alt="Lastochikino" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>8.</strong> Lastochikino: G to B Displacement (-3, -2), R to B Displacement (75, -9)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_lugano.jpg" alt="Lugano" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>9.</strong> Lugano: G to B Displacement (41, -16), R to B Displacement (93, -29)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_melons.jpg" alt="Melons" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>10.</strong> Melons: G to B Displacement (82, 11), R to B Displacement (178, 13)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_self_portrait.jpg" alt="Self Portrait" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>11.</strong> Self Portrait: G to B Displacement (79, 29), R to B Displacement (176, 37)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_siren.jpg" alt="Aligned Siren" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>12.</strong> Aligned Siren: G to B Displacement (49, -6), R to B Displacement (96, -25)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_three_generations.jpg" alt="Three Generations" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>13.</strong> Three Generations: G to B Displacement (53, 14), R to B Displacement (111, 11)</figcaption>
-        </figure>
-    
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_tobolsk.jpg" alt="Tobolsk" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>14.</strong> Tobolsk: G to B Displacement (3, 3), R to B Displacement (6, 3)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_extraImg2.jpg" alt="Extra Image 1" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>15.</strong> Extra Image 1: G to B Displacement (40, 9), R to B Displacement (94, -7)</figcaption>
-        </figure>
-
-        <figure style="grid-column: span 6; margin:0">
-          <img src="./outputs/pyramid_and_border_aligned_extraImg3.jpg" alt="Extra Image 2" style="border-radius:12px; width:100%">
-          <figcaption class="desc" style="margin-top:6px; text-align:center"><strong>16.</strong> Extra Image 2: G to B Displacement (55, 35), R to B Displacement (124, 61)</figcaption>
-        </figure>
+            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- Part 2.4 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.4</span></div>
+          <div class="content">
+            <div class="title">Multiresolution Blending (Oraple and more)</div>
+            <p class="desc">
+              Placeholder
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
 
     <footer>
       <div class="footer-row container">
         <span>© <span id="year"></span> Chris Dodla</span>
-        <span>Project 1 • CS180 @ https://mritik.github.io/1/</span>
+        <span>Project 2 • CS180 @ https://mritik.github.io/2/</span>
       </div>
     </footer>
   </main>
