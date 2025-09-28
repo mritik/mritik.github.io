@@ -430,34 +430,152 @@
         <div class="card" style="grid-column: span 12">
           <div class="thumb"><span class="badge">Part 2.1</span></div>
           <div class="content">
-            <div class="title">Image Sharpening</div>
+            <div class="title">Image "Sharpening"</div>
             <p class="desc">
-              Placeholder
+              In this part, I implemented the unsharp mask filter to sharpen images. I then used this filter to sharpen the provided Taj Mahal image along with another of my selection.
+              My implementation of the unsharp mask filter used the following formula from lecture:
+            </p>
+
+            <figure style="margin:0">
+                <img src="./unsharp_formula.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+            </figure>
+
+            <p class="desc">
+              The goal for image sharpening is to enhance the high frequency components of our image. My steps for accomplishing this were to 1) Use a Gaussian filter (convolve with image) to get a blurred version of the image and 2) Subtract the blurred image from the original image. 
+              The extent to which we want to sharpen our image is controlled by the alpha parameter in our formula. We see that alpha controls how much of the high frequency component we are adding back to the original image, so a higher alpha corresponds to a sharper image.
+
+              Below, we have the image, the blurred image, the high frequency components, and the final sharpened image:
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+                <img src="./taj.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Taj </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+                <img src="./taj_blurred.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Blurred Taj </figcaption>
+              </figure>
+            </div>            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./taj_highfreq.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> High Frequency Taj </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./taj_higher.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Sharpened Taj </figcaption>
               </figure>
             </div>
 
-            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
-            
+            <p class="desc">
+              I then repeated this process with an image of my own chipotle bowl!
+            </p>
+
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pyramid Emir </figcaption>
+                <img src="./ChipotleBowl.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Chipotle </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/pyramid_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Pyramid Italil </figcaption>
+                <img src="./ChipotleBowl_blurred.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Blurred Chipotle </figcaption>
+              </figure>
+            </div>            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./ChipotleBowl_highfreq.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> High Frequency Chipotle </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./ChipotleBowl_higher.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Sharpened Chipotle </figcaption>
               </figure>
             </div>
+
+            <p class="desc">
+              Next, I decided to experiment with blurring an image and then sharpening it to recover the original image. 
+              We find that sharpening a blurred image doesn't exactly recover the original image. When blurring, we lose some high-frequency detail, which we don't recover.
+              This is because sharpening an image can only amplify the existing high-frequency components (if those components are entirely missing then we can't amplify them).
+              However, we notice that the sharpened image is still a substantial improvement from the blurry image.
+
+              The results are below:
+            </p>
+
+             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./taj.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Taj </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./taj_resharpened.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Resharpened Taj </figcaption>
+              </figure>
+            </div>        
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./ChipotleBowl.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Chipotle </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./ChipotleBowl_resharpened.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Resharpened Chipotle </figcaption>
+              </figure>
+            </div>       
+
+            <p class="desc">
+              Finally, I decided to vary alpha values and visualize how my sharpening results differed.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./Taj_alpha0.5.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Taj Alpha 0.5 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./Taj_alpha0.7.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Taj Alpha 0.7 </figcaption>
+              </figure>
+            </div>     
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./Taj_alpha1.0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Taj Alpha 1.0 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./Taj_alpha1.2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Taj Alpha 1.2 </figcaption>
+              </figure>
+            </div>     
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./Taj_alpha1.5.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Taj Alpha 1.5 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./Taj_alpha2.0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Taj Alpha 2.0 </figcaption>
+              </figure>
+            </div>     
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./Taj_alpha3.0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> Taj Alpha 3.0 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./Taj_alpha10.0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> Taj Alpha 10.0 </figcaption>
+              </figure>
+            </div>     
+
+            <p class="desc">
+              Placeholder
+            </p>
+            
           </div>
         </div>
       </div>
