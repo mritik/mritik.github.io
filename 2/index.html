@@ -364,8 +364,10 @@
               I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
               help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
 
+              <br>
+              
               1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
-              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities. 
+              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities compared to the result in 1.2. 
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
