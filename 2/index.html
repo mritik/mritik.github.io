@@ -595,21 +595,41 @@
           <div class="content">
             <div class="title">Hybrid Images</div>
             <p class="desc">
-              Placeholder
+              In this part of the project, I created hybrid images by blending the low-frequency content of one image with the high-frequency content of another. 
+              To extract the low-frequency components, I applied a Gaussian blur to the first image using convolution with a Gaussian filter. 
+              The parameter σ controls the amount of blurring: larger σ values smooth the image more, removing fine detail, while smaller σ values preserve more of the original structure. 
+              The high-frequency components were obtained, similar to earlier, by subtracting a Gaussian-blurred version of the second image from the original, ensuring that only the fine detail information remained. 
+              I then combined the low-pass and high-pass results, using weighting factors to balance their contributions, in order to form the final hybrid image.
+
+              A key part of this task was aligning the images, since misalignment can cause distracting artifacts. 
+              I used the provided starter code to select corresponding points, recenter and rescale the images, rotate one image to match the other, and crop them so that both had the same dimensions. 
+              Once aligned, the two images could be more easily combined. 
+
+              The perceptual effect of the hybrid depends on viewing distance. Up close, the high-frequency details dominate perception, so you mainly see the high-pass image. 
+              From farther away, or when the image is reduced in size, the high frequencies are no longer visible, and the smooth low-frequency structure dominates, so you perceive the low-pass image instead. 
+              My goal was to accentuate this shift in interpretation as much as possible. 
+              I experimented with different cutoff values for the Gaussian filters and created several hybrids, including the Derek and Nutmeg (Dutmeg) example as well as my own image pairs. 
+
+              Below was my initial attempt on Derek and Nutmeg:
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+                <img src="./DerekPicture.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Derek </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+                <img src="./nutmeg.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Nutmeg </figcaption>
               </figure>
             </div>
 
-            <p class="desc">Below are two examples showing the Image Pyramid method on the large tiff images. We can see that the alignment improved substantially.</p>
+            <figure style="margin:0">
+                <img src="./derek_nutmeg.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong></strong> Hybrid Dutmeg (Derek + Nutmeg) </figcaption>
+            </figure>
+            
+            <p class="desc">Below are some more examples on my own images, one of which showcases the full process with the Fourier Transforms.</p>
             
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
