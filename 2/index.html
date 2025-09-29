@@ -737,23 +737,113 @@
           <div class="content">
             <div class="title">Gaussian and Laplacian Stacks and Multiresolution Blending</div>
             <p class="desc">
-              In this part of the project, I implemented multiresolution blending using Gaussian and Laplacian stacks to combine two images in a way that avoids sharp seams and produces smooth transitions. To begin, I constructed Gaussian stacks for both input images by repeatedly convolving with a Gaussian filter and progressively downsampling, with five levels used in total. The Gaussian filter is controlled by a σ value, which determines the amount of smoothing applied: larger σ values result in more pronounced blurring, while smaller σ values preserve more detail. From these Gaussian stacks, I then derived Laplacian stacks by subtracting each level of the Gaussian stack from the next, capturing the band-pass details at each scale. The final level of each Laplacian stack is just the coarsest level of the Gaussian stack, which retains the overall structure of the image.
+              In this part of the project, I implemented multiresolution blending using Gaussian and Laplacian stacks to combine two images in a way that avoids sharp seams and produces smooth transitions. I began by constructing Gaussian stacks for both input images by repeatedly convolving with a Gaussian filter and progressively downsampling, with six levels used in total. The Gaussian filter is controlled by a σ value, which determines the amount of smoothing applied; where larger σ values result in more pronounced blurring, while smaller σ values preserve more detail. From these Gaussian stacks, I then derived Laplacian stacks by subtracting each level of the Gaussian stack from the next, capturing the band-pass details at each scale. The final level of each Laplacian stack is just the coarsest level of the Gaussian stack, which retains the overall structure of the image.
               <br>
-              Once the stacks were built, I used a mask-based blending approach to merge the images. The mask defines which parts of each image contribute to the final blend. To preserve smooth transitions, I also created Gaussian stacks of the masks, which ensured that boundaries between the two images were blurred gradually rather than producing visible seams. The simplest mask I used was a vertical half-and-half split, which allowed me to recreate the "Oraple" (apple–orange blend) example from the Burt and Adelson’s 1983 paper. In addition, I created an irregular circular mask centered on the image, which highlighted how the blending algorithm can smoothly combine arbitrary regions from each image.
+              Once the stacks were built, I used a mask-based blending approach to merge the images. The mask defines which parts of each image contribute to the final blend. To preserve smooth transitions, I also created Gaussian stacks of the masks, which ensured that boundaries between the two images were blurred gradually rather than producing visible seams. The simplest mask I used was a vertical half-and-half split, which allowed me to recreate the "Oraple" (apple–orange blend) example from the Burt and Adelson’s 1983 paper. In addition, I created an irregular circular mask, which highlighted how the blending algorithm can smoothly combine arbitrary regions from each image.
               <br>
-              By combining the Laplacian stacks of the two images at each level according to the corresponding Gaussian mask values, and then collapsing the stack back into a full-resolution image, I was able to produce convincing hybrid blends. The half-and-half mask demonstrated how multiresolution blending avoids the harsh seam you would get from a simple cut-and-paste, while the circular mask showed that more complex regions can also be blended seamlessly. 
+              By combining the Laplacian stacks of the two images at each level according to the corresponding Gaussian mask values, and then collapsing the stack back into a full-resolution image, I was able to produce convincing hybrid blends. The half-and-half mask demonstrated how multiresolution blending avoids the harsh seam you would get from a simple cut-and-paste, and you can see the comparison below.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_emir.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Emir </figcaption>
+                <img src="./apple.jpeg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Apple </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./outputs/exhaustive_aligned_italil.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Initial Italil </figcaption>
+                <img src="./orange.jpeg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Orange </figcaption>
               </figure>
             </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./oraple_stack_merge.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Original Seamed Oraple </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./oraple_blended.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Blended Oraple </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">Below, I visualize the process with the Gaussian and Laplacian stacks</p>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./gaussian_0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Gaussian 0 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./gaussian_1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Gaussian 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./gaussian_2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Gaussian 2 </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./gaussian_3.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Gaussian 3 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./gaussian_4.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Gaussian 4 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./gaussian_5.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Gaussian 5 </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./gaussian_6.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Gaussian 6 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./laplacian_0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Laplacian 0 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./laplacian_1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Laplacian 1 </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./laplacian_2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Laplacian 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./laplacian_3.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Laplacian 3 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./laplacian_4.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Laplacian 4 </figcaption>
+              </figure>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./laplacian_5.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Laplacian 5 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./laplacian_6.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Laplacian 6 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./oraple_blended.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Final Result </figcaption>
+              </figure>
+              
+            </div>
+
+              
 
           </div>
         </div>
