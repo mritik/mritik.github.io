@@ -739,7 +739,7 @@
             <p class="desc">
               In this part of the project, I implemented multiresolution blending using Gaussian and Laplacian stacks to combine two images in a way that avoids sharp seams and produces smooth transitions. I began by constructing Gaussian stacks for both input images by repeatedly convolving with a Gaussian filter and progressively downsampling, with six levels used in total. The Gaussian filter is controlled by a σ value, which determines the amount of smoothing applied; where larger σ values result in more pronounced blurring, while smaller σ values preserve more detail. From these Gaussian stacks, I then derived Laplacian stacks by subtracting each level of the Gaussian stack from the next, capturing the band-pass details at each scale. The final level of each Laplacian stack is just the coarsest level of the Gaussian stack, which retains the overall structure of the image.
               <br>
-              Once the stacks were built, I used a mask-based blending approach to merge the images. The mask defines which parts of each image contribute to the final blend. To preserve smooth transitions, I also created Gaussian stacks of the masks, which ensured that boundaries between the two images were blurred gradually rather than producing visible seams. The simplest mask I used was a vertical half-and-half split, which allowed me to recreate the "Oraple" (apple–orange blend) example from the Burt and Adelson’s 1983 paper. In addition, I created an irregular circular mask, which highlighted how the blending algorithm can smoothly combine arbitrary regions from each image.
+              Once the stacks were built, I used a mask-based blending approach to merge the images. The mask defines which parts of each image contribute to the final blend. To preserve smooth transitions, I also created Gaussian stacks of the masks, which ensured that boundaries between the two images were blurred gradually rather than producing visible seams. The simplest mask I used was a vertical half-and-half split, which allowed me to recreate the "Oraple" example from the Burt and Adelson’s 1983 paper. In addition, I created an irregular circular mask, which highlighted how the blending algorithm can smoothly combine arbitrary regions from each image.
               <br>
               By combining the Laplacian stacks of the two images at each level according to the corresponding Gaussian mask values, and then collapsing the stack back into a full-resolution image, I was able to produce convincing hybrid blends. The half-and-half mask demonstrated how multiresolution blending avoids the harsh seam you would get from a simple cut-and-paste, and you can see the comparison below.
             </p>
@@ -771,11 +771,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./apple_level0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Apple level 0 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Apple level 0 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./orange_level0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Orange level 0 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Orange level 0 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./oraple_level0.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
@@ -786,11 +786,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./apple_level2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Apple level 2 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Apple level 2 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./orange_level2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Orange level 2 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Orange level 2 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./oraple_level2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
@@ -801,11 +801,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./apple_level4.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Apple level 4 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Apple level 4 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./orange_level4.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Orange level 4 </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Orange level 4 </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./oraple_level4.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
@@ -815,11 +815,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./final_masked_apple.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Final Masked Apple </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Final Masked Apple </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./final_masked_orange.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Final Masked Orange </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Final Masked Orange </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./final_masked_oraple.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
@@ -832,11 +832,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./lion.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Original Lion </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Lion </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./tiger.jpeg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Tiger </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Tiger </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./liger_blended.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
@@ -849,11 +849,11 @@
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./Trump.jpeg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Original Trump </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Trump </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./blackcat.jpeg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Cat </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Original Cat </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./trumpCat_irregular_blend.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
