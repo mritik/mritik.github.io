@@ -845,7 +845,10 @@
               </figure>
             </div>
 
-            <p class="desc"> Finally, I have the masterpiece of my assignment: an irregular circular mask blending a cat's eyes onto Donald Trump's face. </p>
+            <p class="desc"> Finally, I have the masterpiece of my assignment: an irregular circular mask blending a cat's eyes onto Donald Trump's face. 
+            For this irregular mask blend, I first drew a polygon on the source image to define the region of interest. This polygon was then converted into a binary mask, then softened with a Gaussian blur so that the transition between foreground and background would be smooth. 
+            After, I aligned the masked source image with the target image using point correspondences and affine warping, ensuring proper placement. To reduce visual seams, I performed color matching along the blend boundary so that brightness and contrast were consistent. Finally, I applied multiband blending with Gaussian and Laplacian stacks, which allowed the irregularly shaped region to merge naturally into the background while preserving fine details.
+            </p>
 
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
               <figure style="margin:0">
