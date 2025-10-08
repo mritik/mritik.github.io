@@ -309,7 +309,7 @@
             <p>Below, we can see the initial homography overlay of image 1 warped onto image 2 using OpenCV's warpPerspective()</p>
             <figure style="margin:0">
               <img src="./homography_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Initial Warp Test </figcaption>
             </figure>
 
           </div>
@@ -325,13 +325,11 @@
           <div class="content">
             <div class="title">Warp the Images</div>
             <p class="desc">
-              I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
-              help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
+             In Part A3, I implemented the actual image warping step using the homography I recovered in the previous part. My goal was to take the source image and map it into the coordinate system of the reference image using inverse warping, which avoids holes in the output. I wrote two interpolation methods from scratch as required by the spec. The first, nearest-neighbor interpolation, simply rounds each back-projected pixel coordinate to the nearest integer location in the source image. This produces a blocky but fast result. The second, bilinear interpolation, computes a weighted average of the four neighboring pixels based on each pixel’s fractional position, resulting in smoother and more visually accurate output.
 
-              <br>
-              
-              1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
-              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities compared to the result in 1.2. 
+            To perform the warping, I first computed the inverse of the homography so I could back-map every pixel from the destination (reference) image to where it originated in the source. For each pixel in the output grid, I transformed its coordinates with the inverse homography, checked whether the point fell within image bounds, and then applied either nearest-neighbor or bilinear interpolation to assign the new color value. I also created helper functions for homogeneous coordinate transformations and bounds checking, as well as visualization tools to display point correspondences between images.
+
+            Finally, I tested my implementation by warping mlk2.jpg into the coordinate frame of mlk1.jpg, timing both interpolation methods and saving the warped and composite results. This allowed me to directly compare the two methods—nearest-neighbor being faster but less smooth, and bilinear producing higher-quality alignment. 
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
