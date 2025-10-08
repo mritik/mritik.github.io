@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 • Project 3 — Chris Dodla</title>
+  <meta name="description" content="Project 3: (Auto)stitching and Photo Mosaics" />
+
+  <!-- Apply saved theme before CSS to avoid mismatch/flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ---------- Theme ---------- */
+    :root {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+
+    /* System preference */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb;
+        --bg-soft: #fff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #335dff;
+        --accent-2: #0fb99d;
+        --ring: rgba(51,93,255,.35);
+        --shadow: 0 10px 24px rgba(2,6,23,.08);
+      }
+    }
+
+    /* Manual overrides (must be AFTER the media block) */
+    :root[data-theme="dark"] {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f7f8fb;
+      --bg-soft: #fff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #335dff;
+      --accent-2: #0fb99d;
+      --ring: rgba(51,93,255,.35);
+      --shadow: 0 10px 24px rgba(2,6,23,.08);
+    }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px; }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 10px 14px; border-radius: 12px; font-weight: 600;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .btn:hover { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white; border: 0; box-shadow: 0 10px 20px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* ---------- Hero ---------- */
+    .hero { display: grid; gap: 18px; padding: 36px 0 18px; }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+    .sub { color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6; }
+
+    /* ---------- Grid & Cards ---------- */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card {
+      grid-column: span 12;
+      display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
+      background: var(--card); overflow: hidden; box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+      box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
+    }
+    .thumb {
+      position: relative;
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--accent) 30%, transparent),
+        color-mix(in oklab, var(--accent-2) 22%, transparent));
+      display: grid; place-items: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 999px;
+      background: color-mix(in oklab, var(--bg) 40%, transparent); color: var(--text);
+      border: 1px solid color-mix(in oklab, var(--text) 18%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .content { padding: 14px 14px 16px; display: grid; gap: 8px; }
+    .title { font-weight: 750; font-size: 18px; }
+    .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent); padding: 4px 8px; border-radius: 999px; }
+
+    @media (min-width: 640px) { .card { grid-column: span 6; } }
+    @media (min-width: 1024px) { .card { grid-column: span 4; } }
+
+    /* ---------- Footer ---------- */
+    footer { margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size: 14px; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>CS180 Portfolio</span>
+      </div>
+      <nav class="nav-links">
+        <a class="btn" href="../">← Back</a>
+        <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="title">
+      <span class="eyebrow">Project 3 • CS180</span>
+      <h1 id="title">(Auto)stitching and Photo Mosaics</h1>
+    </section>
+
+    <!-- Overview / Deliverables -->
+    <section style="margin-top:10px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Overview</span></div>
+          <div class="content">
+            <div class="title">What’s on this page</div>
+            <ul class="desc">
+              <li>Part A.1 - Shoot the Pictures </li>
+              <li>Part A.2 — Recover Homographies </li>
+              <li>Part A.3 —  Warp the Images </li>
+              <li>Part A.4 — Blend the Images into a Mosaic </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Introduction</span></div>
+          <div class="content">
+            <div class="title">Intro</div>
+            <p class="desc">
+              In this project, we built a pipeline to do image warping and mosaic two images together.
+              We begin by capturing overlapping photos of a scene, then compute a homography between image pairs using point correspondences and a normalized least-squares solution. 
+              With this homography, we implement inverse warping using custom nearest-neighbor and bilinear interpolation functions to rectify and align images. 
+              Finally, we blend the warped images into a seamless mosaic using weighted averaging and methods such as Laplacian pyramid blending to minimize ghosting and edge artifacts, producing smooth and visually coherent panoramas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Part A.1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A.1</span></div>
+          <div class="content">
+            <div class="title">Shoot the Pictures</div>
+            <p class="desc">
+              In this part, I took three sets of images with a projective transformation between them. I did this by fixing the center of projection and rotating my phone camera slightly so that
+              around 50-70% of the scene overlapped.
+              Most of these images are of fixed objects and there aren't many moving components. You can find the three pairs of images below:
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Mlk Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Mlk Image 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Room Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room Image 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> TV Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> TV Image 2 </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Part A.2 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A.2</span></div>
+          <div class="content">
+            <div class="title">Recover Homographies</div>
+            <p class="desc">
+              In this part, I tried to compute the gradient magnitude and edge map of the cameraman image using the dx and dy filters. 
+              The gradient magnitude is computed as the square root of the dx convolution squared + the dy convolution squared. 
+              I computed the edge map by setting a threshold for the gradient magnitude and outputting a binary image. 
+              I decided to use an adaptive threshold for flexibility and I settled on 0.95 (picking the top 5% of gradients). 
+              A higher threshold would result in fewer real edges being detected and a lower threshold would cause more noise to be included.
+              I tested a couple different thresholds from 80th percentile to 99th percentile and decided that I preserved the relevant edges while eliminating most noise at 95th.
+
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gx.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gy.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmag.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edges.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part A.3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A.3</span></div>
+          <div class="content">
+            <div class="title">Warp the Images</div>
+            <p class="desc">
+              I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
+              help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
+
+              <br>
+              
+              1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
+              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities compared to the result in 1.2. 
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gxGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gyGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmagGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edgesGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              2) With the second method, I attempted to get the same result with a singular convolution instead of two. I convolved the Gaussian filter with the Dx and Dy filters to create a derivative of Gaussian
+              (DoG) filter. I then applied the DoG filter to the original image and got the resulting grad mag and edge map. We can see that, using the same threshold, these images look identical to those generated
+              with the first method.
+            </p>
+
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gx_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gy_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmag_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edges_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part A.4 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A.4</span></div>
+          <div class="content">
+            <div class="title">Blend the Images into a Mosaic</div>
+            <p class="desc">
+              I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
+              help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
+
+              <br>
+              
+              1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
+              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities compared to the result in 1.2. 
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gxGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gyGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmagGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edgesGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              2) With the second method, I attempted to get the same result with a singular convolution instead of two. I convolved the Gaussian filter with the Dx and Dy filters to create a derivative of Gaussian
+              (DoG) filter. I then applied the DoG filter to the original image and got the resulting grad mag and edge map. We can see that, using the same threshold, these images look identical to those generated
+              with the first method.
+            </p>
+
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gx_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_gy_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./cameraman_gradmag_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./cameraman_edges_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+              </figure>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Chris Dodla</span>
+        <span>Project 3 • CS180 @ https://mritik.github.io/3/</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
