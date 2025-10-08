@@ -282,35 +282,35 @@
           <div class="content">
             <div class="title">Recover Homographies</div>
             <p class="desc">
-              In this part, I tried to compute the gradient magnitude and edge map of the cameraman image using the dx and dy filters. 
-              The gradient magnitude is computed as the square root of the dx convolution squared + the dy convolution squared. 
-              I computed the edge map by setting a threshold for the gradient magnitude and outputting a binary image. 
-              I decided to use an adaptive threshold for flexibility and I settled on 0.95 (picking the top 5% of gradients). 
-              A higher threshold would result in fewer real edges being detected and a lower threshold would cause more noise to be included.
-              I tested a couple different thresholds from 80th percentile to 99th percentile and decided that I preserved the relevant edges while eliminating most noise at 95th.
+              In this part, I used least squares estimation to determine a homography matrix H that maps points from one image to another.
+              I began by collecting at least four pairs of corresponding points between two overlapping images through my own interactive point-selection interface. 
+              To improve numerical stability, I normalized both point sets by translating them to the origin and scaling them so that their average distance from the origin was sqrt(2). 
+              Using these normalized coordinates, I constructed a linear system Ah = b, where h contains the eight unknown parameters of the homography. 
+              I then solved this overdetermined system using np.linalg.lstsq() to minimize the least-squares error. The resulting normalized homography was denormalized and scaled so that H[2,2] = 1.
 
+              To verify that the method worked correctly, I printed the system dimensions, showed sample rows of A and b, and visualized the selected correspondences side by side. 
+              Finally, I applied the computed homography to warp one image onto the other using OpenCV’s warpPerspective for a preview and saved the blended overlay result. 
+              This helped me confirm that my implementation successfully recovered and validated the projective transformation between the two input images.
+
+              Below, you can see the correspondences visualized, some of my systems of equations and the recovered homography matrix.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gx.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+                <img src="./homographyCorrespondences.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Correspondences Visualization </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_gy.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+                <img src="./systems.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Systems And Homography Matrix </figcaption>
               </figure>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./cameraman_gradmag.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./cameraman_edges.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
-              </figure>
-            </div>
+
+            <p>Below, we can see the initial homography overlay of image 1 warped onto image 2 using OpenCV's warpPerspective()</p>
+            <figure style="margin:0">
+              <img src="./homography_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+            </figure>
 
           </div>
         </div>
