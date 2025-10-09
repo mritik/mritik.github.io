@@ -298,18 +298,18 @@
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
                 <img src="./homographyCorrespondences.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Correspondences Visualization </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Correspondences Visualization MLK </figcaption>
               </figure>
               <figure style="margin:0">
                 <img src="./systems.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Systems And Homography Matrix </figcaption>
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Systems And Homography Matrix MLK </figcaption>
               </figure>
             </div>
 
             <p>Below, we can see the initial homography overlay of image 1 warped onto image 2 using OpenCV's warpPerspective()</p>
             <figure style="margin:0">
               <img src="./homography_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Initial Warp Test </figcaption>
+              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Initial Warp Test MLK </figcaption>
             </figure>
 
           </div>
@@ -325,61 +325,107 @@
           <div class="content">
             <div class="title">Warp the Images</div>
             <p class="desc">
-             In Part A3, I implemented the actual image warping step using the homography I recovered in the previous part. My goal was to take the source image and map it into the coordinate system of the reference image using inverse warping, which avoids holes in the output. I wrote two interpolation methods from scratch as required by the spec. The first, nearest-neighbor interpolation, simply rounds each back-projected pixel coordinate to the nearest integer location in the source image. This produces a blocky but fast result. The second, bilinear interpolation, computes a weighted average of the four neighboring pixels based on each pixel’s fractional position, resulting in smoother and more visually accurate output.
+             In Part A3, I implemented the actual image warping step using the homography I recovered in the previous part. My goal was to take the source image and map it into the coordinate system of the reference image using inverse warping, which avoids holes in the output. I wrote two interpolation methods from scratch: nearest-neighbor and bilinear interpolation. The first, nearest-neighbor interpolation, rounds each back-projected pixel coordinate to the nearest integer location in the source image. This produces a blocky but fast result. The second, bilinear interpolation, computes a weighted average of the four neighboring pixels based on each pixel’s fractional position, resulting in smoother and more visually accurate output.
 
-            To perform the warping, I first computed the inverse of the homography so I could back-map every pixel from the destination (reference) image to where it originated in the source. For each pixel in the output grid, I transformed its coordinates with the inverse homography, checked whether the point fell within image bounds, and then applied either nearest-neighbor or bilinear interpolation to assign the new color value. I also created helper functions for homogeneous coordinate transformations and bounds checking, as well as visualization tools to display point correspondences between images.
+            To perform the warping, I first computed the inverse of the homography so I could back-map every pixel from the destination (reference) image to where it originated in the source. For each pixel in the output grid, I transformed its coordinates with the inverse homography, checked whether the point fell within image bounds, and then applied either nearest-neighbor or bilinear interpolation to assign the new color value. I also created helper functions for homogeneous coordinate transformations and bounds checking, and again visualized the point correspondences between the images.
 
-            Finally, I tested my implementation by warping mlk2.jpg into the coordinate frame of mlk1.jpg, timing both interpolation methods and saving the warped and composite results. This allowed me to directly compare the two methods—nearest-neighbor being faster but less smooth, and bilinear producing higher-quality alignment. 
+            Finally, I tested my implementation by warping mlk2.jpg into the coordinate frame of mlk1.jpg, timing both interpolation methods and saving the warped and composite results.
             </p>
-
+            <figure style="margin:0">
+              <img src="./warpingTimeComparison" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Time Comparison of NN vs Bilinear </figcaption>
+            </figure>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gxGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+                <img src="./mlk2_warped_bilinear_into_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bilinear Warping MLK </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_gyGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+                <img src="./mlk2_warped_nearest_into_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> NN Warping MLK </figcaption>
               </figure>
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gradmagGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+                <img src="./composite_bilinear_on_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Bilinear Composite MLK </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_edgesGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+                <img src="./composite_nearest_on_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> NN Composite MLK </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room2_warped_bilinear_into_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Bilinear Warping Room </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2_warped_nearest_into_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> NN Warping Room </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./composite_bilinear_on_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> Bilinear Composite Room </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./composite_nearest_on_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> NN Composite Room </figcaption>
               </figure>
             </div>
 
             <p class="desc">
-              2) With the second method, I attempted to get the same result with a singular convolution instead of two. I convolved the Gaussian filter with the Dx and Dy filters to create a derivative of Gaussian
-              (DoG) filter. I then applied the DoG filter to the original image and got the resulting grad mag and edge map. We can see that, using the same threshold, these images look identical to those generated
-              with the first method.
+              If you zoom in, you can see that the warped image from nearest-neighbor is less smooth, whereas bilinear produces a higher quality alignment that is more "smooth". 
+              Additionally, we see that the nearest-neighbor method is almost 2x faster than the bilinear interpolation method. Furthermore, I include some composite images that show
+              my warped image overlaid onto the other, reference image to visualize how well the warped result aligns with my target scene.
             </p>
 
+            <p class="desc">
+              Next, we can take a look at some rectification examples. I used the homography framework to make a tilted rectangular object actually appear rectangular. 
+              I manually selected the four corners of the rectangle in the image, ordered them, and estimated their real-world rectangular proportions by measuring 
+              average side lengths and scaling the rectangle so that the longest side fits within a set maximum (1200 pixels) while preserving the aspect ratio.
+              Then, I computed a homography that maps this quadrilateral to a perfectly rectangular grid and warped the image using either nearest-neighbor or bilinear interpolation. 
+              This resulted in rectified images where the selected plane appears flat and undistorted, confirming that my warping and homography functions work correctly.
+            </p>
+
+            <figure style="margin:0">
+                <img src="./chocolate.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Chocolate </figcaption>
+            </figure>
             
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gx_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+                <img src="./chocolate_rectified_bilinear.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bilinear Rectified Chocolate </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_gy_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+                <img src="./chocolate_rectified_nearest.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> NN Rectified Chocolate </figcaption>
               </figure>
             </div>
+            <figure style="margin:0">
+                <img src="./notebook.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Notebook </figcaption>
+            </figure>
+            
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gradmag_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+                <img src="./notebook_rectified_bilinear.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Bilinear Rectified Notebook </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_edges_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+                <img src="./notebook_rectified_nearest.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> NN Rectified Notebook </figcaption>
               </figure>
             </div>
+
+            <p class="desc">
+              Again, we can notice some differences in the output of the bilinear interpolation method and the nearest-neighbor method. We can especially see the difference in the image of the chocolate bar.
+              Taking a look at the text on the bar in both images, we see that the nearest neighbor warped image has much blockier text, while the bilinear chocolate bar is a lot smoother.
+            </p>
+
 
           </div>
         </div>
@@ -394,64 +440,67 @@
           <div class="content">
             <div class="title">Blend the Images into a Mosaic</div>
             <p class="desc">
-              I then decided to improve my edge detection by first utilizing a Gaussian filter to smooth the images before I applied the Dx and Dy filters. I reasoned that this would 
-              help me reduce noise in the image early, so that the dx and dy filters can detect true edges more clearly. I tested this approach with two different methods:
-
+              In this part, I built a seamless mosaic by registering and blending two overlapping images using a computed homography. 
+              I began by warping the second image into the coordinate system of the reference image so that their overlapping regions aligned geometrically on a shared canvas. 
+              To determine the proper output size, I projected all image corners through their homographies and used the resulting bounding box to create a canvas large enough to contain both warped images. 
+              I then applied a translation matrix to shift all coordinates into positive space, ensuring that every pixel from both images was visible.
               <br>
-              
-              1) First, I tried performing the steps sequentially. I blurred the image using a Gaussian filter, then I applied the dx and dy filters to the modified image to compute grad mag and the edge map. 
-              The results are below and we can see that with the same threshold, we have improvement in the definition of the edges and a reduction in discontinuities compared to the result in 1.2. 
+              For blending, I first implemented feathered averaging, where I created smooth alpha masks from the distance transform of valid pixels. 
+              These masks assign high weights to the center of each image and gradually fade toward the edges, which allows overlapping regions to transition softly instead of forming sharp seams. 
+              To further improve visual quality, I extended this approach with a two-level Laplacian pyramid blend. 
+              This method separates each warped image into low-frequency (color and illumination) and high-frequency (edges and textures) components, blends them separately using feathered masks, and then recombines them.
+              <br>
+              This multi-band approach effectively preserves detail while minimizing brightness differences and ghosting near high-contrast boundaries. 
+              The resulting mosaics demonstrate smooth blending, sharp edges, and consistent exposure between overlapping areas, producing a visually coherent mosaic
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gxGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_gyGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
               </figure>
             </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./cameraman_gradmagGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./cameraman_edgesGaussian.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
               </figure>
             </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Room Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> TV 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> TV 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_tv.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> Room Mosaic </figcaption>
+            </figure>
 
             <p class="desc">
-              2) With the second method, I attempted to get the same result with a singular convolution instead of two. I convolved the Gaussian filter with the Dx and Dy filters to create a derivative of Gaussian
-              (DoG) filter. I then applied the DoG filter to the original image and got the resulting grad mag and edge map. We can see that, using the same threshold, these images look identical to those generated
-              with the first method.
+              Most of these mosaics look pretty good with minimal ghosting! The MLK mosaic still needs some more improvement. Although I selected many point correspondences (10-12), I don't think I selected
+              all of them accurately and due to the image's many features and components, there remains some misalignment. 
             </p>
-
-            
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./cameraman_gx_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Dx Filter </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./cameraman_gy_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Dy Filter </figcaption>
-              </figure>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./cameraman_gradmag_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Grad Mag </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./cameraman_edges_DoG.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Edge Map </figcaption>
-              </figure>
-            </div>
-
           </div>
         </div>
       </div>
