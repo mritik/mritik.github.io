@@ -205,6 +205,10 @@
               <li>Part A.2 — Recover Homographies </li>
               <li>Part A.3 —  Warp the Images </li>
               <li>Part A.4 — Blend the Images into a Mosaic </li>
+              <li>Part B.1 - Harris Corner Detection </li>
+              <li>Part B.2 — Feature Descriptor Extraction </li>
+              <li>Part B.3 —  Feature Matching </li>
+              <li>Part B.4 — RANSAC for Robust Homography </li>
             </ul>
           </div>
         </div>
@@ -223,6 +227,7 @@
               We begin by capturing overlapping photos of a scene, then compute a homography between image pairs using point correspondences and a normalized least-squares solution. 
               With this homography, we implement inverse warping using custom nearest-neighbor and bilinear interpolation functions to rectify and align images. 
               Finally, we blend the warped images into a seamless mosaic using weighted averaging and methods such as Laplacian pyramid blending to minimize ghosting and edge artifacts, producing smooth and visually coherent panoramas.
+              Later, in part B of the project, we create automatic mosaics using Harris Corner Detection, ANMS, Feature extraction and matching, and RANSAC.
             </p>
           </div>
         </div>
@@ -500,6 +505,178 @@
             <p class="desc">
               Most of these mosaics look pretty good with minimal ghosting! The MLK mosaic still needs some more improvement. Although I selected many point correspondences (10-12), I don't think I selected
               all of them accurately and due to the image's many features and components, there remains some misalignment. 
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part B.1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part B.1</span></div>
+          <div class="content">
+            <div class="title">Harris Corner Detection</div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+              </figure>
+            </div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part B.2 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part B.2</span></div>
+          <div class="content">
+            <div class="title">Feature Descriptor Extraction</div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+              </figure>
+            </div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part B.3 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part B.3</span></div>
+          <div class="content">
+            <div class="title">Feature Matching</div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+              </figure>
+            </div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part B.4 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part B.4</span></div>
+          <div class="content">
+            <div class="title">RANSAC for Robust Homography</div>
+            <p class="desc">
+              Placeholder Text
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+              </figure>
+            </div>
+            <p class="desc">
+              Placeholder Text
             </p>
           </div>
         </div>
