@@ -632,35 +632,62 @@
           <div class="content">
             <div class="title">RANSAC for Robust Homography</div>
             <p class="desc">
-              Placeholder Text
+              I started from the ratio-test matches and filtered to points that lay well inside both images. 
+              Afterwards, I implemented 4 point RANSAC: on each iteration I sampled four matches, estimated a homography, computed forward reprojection error, and marked inliers with a pixel threshold (usually 3-4). 
+              I used an adaptive iteration cap based on the current inlier rate and refit the homography on all inliers when enough were available. 
+              Then I visualized only the inlier correspondences and warped the second image into the first using the RANSAC homography to produce the automatic mosaic. 
+              Below, we can see comparisons of my automatic mosaics with my manual stitches. Note that some of my images are different than what I originally used in Part A since I found prettier ones :)
             </p>
 
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
-              </figure>
-            </div>
             <figure style="margin:0">
-                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+                <img src="./ransacInliers_room.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Room Ransac Inliers </figcaption>
             </figure>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+                <img src="./mosaic_room.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Room Manual Mosaic </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+                <img src="./mosaic_room_auto.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Room Automatic Mosaic </figcaption>
+              </figure>
+            </div>
+            
+            <figure style="margin:0">
+                <img src="./ransacInliers_courtyard.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Courtyard Ransac Inliers </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mosaic_courtyard.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Courtyard Manual Mosaic </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mosaic_courtyard_auto.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Courtyard Automatic Mosaic </figcaption>
+              </figure>
+            </div>
+
+            <figure style="margin:0">
+                <img src="./ransacInliers_flowers.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Flowers Ransac Inliers </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mosaic_flowers.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Flowers Manual Mosaic </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mosaic_flowers_auto.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Flowers Automatic Mosaic </figcaption>
               </figure>
             </div>
             <p class="desc">
-              Placeholder Text
+              We can see that the automatic mosaics tend to be a bit better, especially on some of the image pairs that have a ton of parts. The flowers images were notoriously difficult to manually pick out
+              point correspondences and create a manual mosaic. I think the automatic mosaic was much more crisp and well-aligned for the flowers and courtyard images. We see slight improvement for the room images as well
+              but not as much. I think the primary reason for these disparities is not due to the algorithms but rather the human error involved in mapping correspondences in complex images.
+              Overall, I'm really happy with the results! I think there are certain parts of the images with a little blur despite my use of feathering and/or a laplacian blend but it's quite minimal.
             </p>
           </div>
         </div>
