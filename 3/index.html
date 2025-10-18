@@ -605,35 +605,19 @@
           <div class="content">
             <div class="title">Feature Matching</div>
             <p class="desc">
-              Placeholder Text
+              I computed pairwise descriptor distances and, for each feature in image A, I found its first and second nearest neighbors in image B. 
+              I applied Lowe’s ratio test by keeping matches whose nearest distance divided by the second-nearest was below my threshold (0.75), which rejected ambiguous matches. 
+              Then, I enforced mutual consistency by requiring that each kept pair be each other’s best match in the opposite direction and visualized the resulting correspondences by drawing indexed points on each image.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
-              </figure>
-            </div>
-            <figure style="margin:0">
-                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
-            </figure>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+                <img src="./B3FeatureMatching.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Initial Room Feature Matching </figcaption>
               </figure>
             </div>
             <p class="desc">
-              Placeholder Text
+              In the next part, I'll show how the matched features changed after using RANSAC. I'll also include the matched point diagrams for all the images I ended up using in my final mosaics.
             </p>
           </div>
         </div>
