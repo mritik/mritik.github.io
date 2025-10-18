@@ -519,35 +519,35 @@
           <div class="content">
             <div class="title">Harris Corner Detection</div>
             <p class="desc">
-              Placeholder Text
+              I converted each RGB image to grayscale floats and computed the Harris response using corner_harris with the eps method and sigma 1.5. 
+              I then picked candidate corners via peak_local_max using a 90th-percentile threshold and a min_distance of 12, and I discarded detections within 20 pixels of the image borders. 
+              I overlayed these raw Harris corners on the original images to visualize the detections. 
+              Next, I applied Adaptive Non-Maximal Suppression which involved sorting corners by strength, computing each point’s radius to the nearest sufficiently stronger neighbor using c_robust set to 0.95, and keeping the top 200 by radius. 
+              After plotting the ANMS-filtered corners, I saw a much more spatially uniform and distinctive set of keypoints.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+                <img src="./Room1_harris_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Room 1 Harris Overlay</figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+                <img src="./Room1_corners_with_anms.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Room 1 with ANMS </figcaption>
               </figure>
             </div>
-            <figure style="margin:0">
-                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
-            </figure>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+                <img src="./Room2_harris_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Room 2 Harris Overlay </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+                <img src="./Room2_corners_with_anms.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 2 with ANMS</figcaption>
               </figure>
             </div>
             <p class="desc">
-              Placeholder Text
+              As we can see, there are a ton of very clustered points for the non-ANMS harris method. When we do use ANMS, we see a very nice spread-out distribution of points.
             </p>
           </div>
         </div>
