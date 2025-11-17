@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 • Project 4 — Chris Dodla</title>
+  <meta name="description" content="Project 4: Neural Radiance Fields (NeRF)" />
+
+  <!-- Apply saved theme before CSS to avoid mismatch/flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ---------- Theme ---------- */
+    :root {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+
+    /* System preference */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb;
+        --bg-soft: #fff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #335dff;
+        --accent-2: #0fb99d;
+        --ring: rgba(51,93,255,.35);
+        --shadow: 0 10px 24px rgba(2,6,23,.08);
+      }
+    }
+
+    /* Manual overrides (must be AFTER the media block) */
+    :root[data-theme="dark"] {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f7f8fb;
+      --bg-soft: #fff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #335dff;
+      --accent-2: #0fb99d;
+      --ring: rgba(51,93,255,.35);
+      --shadow: 0 10px 24px rgba(2,6,23,.08);
+    }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px; }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 10px 14px; border-radius: 12px; font-weight: 600;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .btn:hover { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white; border: 0; box-shadow: 0 10px 20px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* ---------- Hero ---------- */
+    .hero { display: grid; gap: 18px; padding: 36px 0 18px; }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+    .sub { color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6; }
+
+    /* ---------- Grid & Cards ---------- */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card {
+      grid-column: span 12;
+      display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
+      background: var(--card); overflow: hidden; box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+      box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
+    }
+    .thumb {
+      position: relative;
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--accent) 30%, transparent),
+        color-mix(in oklab, var(--accent-2) 22%, transparent));
+      display: grid; place-items: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 999px;
+      background: color-mix(in oklab, var(--bg) 40%, transparent); color: var(--text);
+      border: 1px solid color-mix(in oklab, var(--text) 18%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .content { padding: 14px 14px 16px; display: grid; gap: 8px; }
+    .title { font-weight: 750; font-size: 18px; }
+    .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent); padding: 4px 8px; border-radius: 999px; }
+
+    @media (min-width: 640px) { .card { grid-column: span 6; } }
+    @media (min-width: 1024px) { .card { grid-column: span 4; } }
+
+    /* ---------- Footer ---------- */
+    footer { margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size: 14px; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>CS180 Portfolio</span>
+      </div>
+      <nav class="nav-links">
+        <a class="btn" href="../">← Back</a>
+        <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="title">
+      <span class="eyebrow">Project 4 • CS180</span>
+      <h1 id="title">Neural Radiance Fields (NeRF)</h1>
+    </section>
+
+    <!-- Overview / Deliverables -->
+    <section style="margin-top:10px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Overview</span></div>
+          <div class="content">
+            <div class="title">What’s on this page</div>
+            <ul class="desc">
+              <li>Part 0 - Calibrating Your Camera and Capturing a 3D Scan </li>
+              <li>Part 1 - Fit a Neural Field to a 2D Image</li>
+              <li>Part 2 - Fit a Neural Radiance Field from Multi-view Images </li>
+              <li>Part 2.6 — Training with your own data </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Introduction</span></div>
+          <div class="content">
+            <div class="title">Intro</div>
+            <p class="desc">
+              In this project, I attempt to train neural radiance fields to fit multi-view images on a provided dataset and then on my own collected dataset. 
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Part 0 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 0</span></div>
+          <div class="content">
+            <div class="title">Camera Calibration and 3D Scanning</div>
+            <p class="desc">
+              In this part, I took three sets of images with a projective transformation between them. I did this by fixing the center of projection and rotating my phone camera slightly so that
+              around 50-70% of the scene overlapped.
+              Most of these images are of fixed objects and there aren't many moving components. You can find the three pairs of images below:
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Mlk Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Mlk Image 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Room Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room Image 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> TV Image 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> TV Image 2 </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Part 1 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 1</span></div>
+          <div class="content">
+            <div class="title">Fit a Neural Field to a 2D Image</div>
+            <p class="desc">
+              In this part, I used least squares estimation to determine a homography matrix H that maps points from one image to another.
+              I began by collecting at least four pairs of corresponding points between two overlapping images through my own interactive point-selection interface. 
+              To improve numerical stability, I normalized both point sets by translating them to the origin and scaling them so that their average distance from the origin was sqrt(2). 
+              Using these normalized coordinates, I constructed a linear system Ah = b, where h contains the eight unknown parameters of the homography. 
+              I then solved this overdetermined system using np.linalg.lstsq() to minimize the least-squares error. The resulting normalized homography was denormalized and scaled so that H[2,2] = 1.
+
+              To verify that the method worked correctly, I printed the system dimensions, showed sample rows of A and b, and visualized the selected correspondences side by side. 
+              Finally, I applied the computed homography to warp one image onto the other using OpenCV’s warpPerspective for a preview and saved the blended overlay result. 
+              This helped me confirm that my implementation successfully recovered and validated the projective transformation between the two input images.
+
+              Below, you can see the correspondences visualized, some of my systems of equations and the recovered homography matrix.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./homographyCorrespondences.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Correspondences Visualization MLK </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./systems.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Systems And Homography Matrix MLK </figcaption>
+              </figure>
+            </div>
+
+            <p>Below, we can see the initial homography overlay of image 1 warped onto image 2 using OpenCV's warpPerspective()</p>
+            <figure style="margin:0">
+              <img src="./homography_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Initial Warp Test MLK </figcaption>
+            </figure>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2.1-2.5 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.1-2.5</span></div>
+          <div class="content">
+            <div class="title">Fit a Neural Radiance Field from Multi-view Images</div>
+            <p class="desc">
+             In Part A3, I implemented the actual image warping step using the homography I recovered in the previous part. My goal was to take the source image and map it into the coordinate system of the reference image using inverse warping, which avoids holes in the output. I wrote two interpolation methods from scratch: nearest-neighbor and bilinear interpolation. The first, nearest-neighbor interpolation, rounds each back-projected pixel coordinate to the nearest integer location in the source image. This produces a blocky but fast result. The second, bilinear interpolation, computes a weighted average of the four neighboring pixels based on each pixel’s fractional position, resulting in smoother and more visually accurate output.
+
+            To perform the warping, I first computed the inverse of the homography so I could back-map every pixel from the destination (reference) image to where it originated in the source. For each pixel in the output grid, I transformed its coordinates with the inverse homography, checked whether the point fell within image bounds, and then applied either nearest-neighbor or bilinear interpolation to assign the new color value. I also created helper functions for homogeneous coordinate transformations and bounds checking, and again visualized the point correspondences between the images.
+
+            Finally, I tested my implementation by warping mlk2.jpg into the coordinate frame of mlk1.jpg, timing both interpolation methods and saving the warped and composite results.
+            </p>
+            <figure style="margin:0">
+              <img src="./warpingTimeComparison.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Time Comparison of NN vs Bilinear </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk2_warped_bilinear_into_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bilinear Warping MLK </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2_warped_nearest_into_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> NN Warping MLK </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./composite_bilinear_on_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Bilinear Composite MLK </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./composite_nearest_on_mlk1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> NN Composite MLK </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room2_warped_bilinear_into_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Bilinear Warping Room </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2_warped_nearest_into_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> NN Warping Room </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./composite_bilinear_on_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> Bilinear Composite Room </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./composite_nearest_on_room1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> NN Composite Room </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              If you zoom in, you can see that the warped image from nearest-neighbor is less smooth, whereas bilinear produces a higher quality alignment that is more "smooth". 
+              Additionally, we see that the nearest-neighbor method is almost 2x faster than the bilinear interpolation method. Furthermore, I include some composite images that show
+              my warped image overlaid onto the other, reference image to visualize how well the warped result aligns with my target scene.
+            </p>
+
+            <p class="desc">
+              Next, we can take a look at some rectification examples. I used the homography framework to make a tilted rectangular object actually appear rectangular. 
+              I manually selected the four corners of the rectangle in the image, ordered them, and estimated their real-world rectangular proportions by measuring 
+              average side lengths and scaling the rectangle so that the longest side fits within a set maximum (1200 pixels) while preserving the aspect ratio.
+              Then, I computed a homography that maps this quadrilateral to a perfectly rectangular grid and warped the image using either nearest-neighbor or bilinear interpolation. 
+              This resulted in rectified images where the selected plane appears flat and undistorted, confirming that my warping and homography functions work correctly.
+            </p>
+
+            <figure style="margin:0">
+                <img src="./chocolate.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Chocolate </figcaption>
+            </figure>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./chocolate_rectified_bilinear.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bilinear Rectified Chocolate </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./chocolate_rectified_nearest.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> NN Rectified Chocolate </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./notebook.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Notebook </figcaption>
+            </figure>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./notebook_rectified_bilinear.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Bilinear Rectified Notebook </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./notebook_rectified_nearest.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> NN Rectified Notebook </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              Again, we can notice some differences in the output of the bilinear interpolation method and the nearest-neighbor method. We can especially see the difference in the image of the chocolate bar.
+              Taking a look at the text on the bar in both images, we see that the nearest neighbor warped image has much blockier text, while the bilinear chocolate bar is a lot smoother.
+            </p>
+
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2.6 -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.6</span></div>
+          <div class="content">
+            <div class="title">Training with your own data</div>
+            <p class="desc">
+              In this part, I built a seamless mosaic by registering and blending two overlapping images using a computed homography. 
+              I began by warping the second image into the coordinate system of the reference image so that their overlapping regions aligned geometrically on a shared canvas. 
+              To determine the proper output size, I projected all image corners through their homographies and used the resulting bounding box to create a canvas large enough to contain both warped images. 
+              I then applied a translation matrix to shift all coordinates into positive space, ensuring that every pixel from both images was visible.
+              <br>
+              For blending, I first implemented feathered averaging, where I created smooth alpha masks from the distance transform of valid pixels. 
+              These masks assign high weights to the center of each image and gradually fade toward the edges, which allows overlapping regions to transition softly instead of forming sharp seams. 
+              To further improve visual quality, I extended this approach with a two-level Laplacian pyramid blend. 
+              This method separates each warped image into low-frequency (color and illumination) and high-frequency (edges and textures) components, blends them separately using feathered masks, and then recombines them.
+              <br>
+              This multi-band approach effectively preserves detail while minimizing brightness differences and ghosting near high-contrast boundaries. 
+              The resulting mosaics demonstrate smooth blending, sharp edges, and consistent exposure between overlapping areas, producing a visually coherent mosaic.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_room.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Room Mosaic </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> TV 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> TV 2 </figcaption>
+              </figure>
+            </div>
+            <figure style="margin:0">
+                <img src="./mosaic_tv.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> TV Mosaic </figcaption>
+            </figure>
+
+            <p class="desc">
+              Most of these mosaics look pretty good with minimal ghosting! The MLK mosaic still needs some more improvement. Although I selected many point correspondences (10-12), I don't think I selected
+              all of them accurately and due to the image's many features and components, there remains some misalignment. 
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Chris Dodla</span>
+        <span>Project 4 • CS180 @ https://mritik.github.io/4/</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
