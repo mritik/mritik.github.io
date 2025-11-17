@@ -287,36 +287,90 @@
           <div class="content">
             <div class="title">Fit a Neural Field to a 2D Image</div>
             <p class="desc">
-              In this part, I used least squares estimation to determine a homography matrix H that maps points from one image to another.
-              I began by collecting at least four pairs of corresponding points between two overlapping images through my own interactive point-selection interface. 
-              To improve numerical stability, I normalized both point sets by translating them to the origin and scaling them so that their average distance from the origin was sqrt(2). 
-              Using these normalized coordinates, I constructed a linear system Ah = b, where h contains the eight unknown parameters of the homography. 
-              I then solved this overdetermined system using np.linalg.lstsq() to minimize the least-squares error. The resulting normalized homography was denormalized and scaled so that H[2,2] = 1.
+              In this part, I fit a neural field to a single RGB image. I normalize pixel values and for each pixel, 
+              I create normalized x and y coordinates and apply a positional encoding with 10 frequency bands using sine and cosine functions. 
+              These encoded coordinates are then fed into a multilayer perceptron (MLP).
 
-              To verify that the method worked correctly, I printed the system dimensions, showed sample rows of A and b, and visualized the selected correspondences side by side. 
-              Finally, I applied the computed homography to warp one image onto the other using OpenCV’s warpPerspective for a preview and saved the blended overlay result. 
-              This helped me confirm that my implementation successfully recovered and validated the projective transformation between the two input images.
+              The MLP has 4 hidden layers with width 256, each followed by a ReLU activation, and a final linear layer that outputs 3 channels with a sigmoid. 
+              I train the model with the Adam optimizer (learning rate 0.01), minimizing mean squared error between predicted and ground truth colors, and using random batches of 10,000 pixels for 3,000 steps.
 
-              Below, you can see the correspondences visualized, some of my systems of equations and the recovered homography matrix.
+              During training, I logged the batch MSE and corresponding PSNR values (computed as 10 * log10(1 / MSE)) every 100 steps. Below, I show plots for these as well as the final reconstructed image. 
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./homographyCorrespondences.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Correspondences Visualization MLK </figcaption>
+                <img src="./1Img.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Fox Image </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./systems.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Systems And Homography Matrix MLK </figcaption>
+                <img src="./1Img_recon.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Reconstructed Fox Image </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./1Img_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Fox PSNR Plot </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./1Img_mse_curve.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Fox MSE Plot </figcaption>
               </figure>
             </div>
 
-            <p>Below, we can see the initial homography overlay of image 1 warped onto image 2 using OpenCV's warpPerspective()</p>
-            <figure style="margin:0">
-              <img src="./homography_overlay.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Initial Warp Test MLK </figcaption>
-            </figure>
+            <p class="desc">
+              I repeated this process for another image of my choice (from my dataset).
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./duckImgP1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Duck Image </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./duckImgP1_recon.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Reconstructed Duck Image </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duckImgP1_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Duck PSNR Plot </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duckImgP1_mse_curve.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck MSE Plot </figcaption>
+              </figure>
+            </div>
 
+            <p class="desc">
+              In addition, I trained with varying choices of max positional encoding frequency and width. I had 2 choices of each and below, you can see a 2x2 grid of the results along with the PSNR plots.
+              I varied frequency between 2 and 16 and I varied width between 64 and 512. The best results seem to come from frequency 16 and width 64, whereas frequency 2 + width 64 and frequency 16 + width 512 are the worst.
+            </p>
+            <figure style="margin:0">
+                  <img src="./Part1Grid.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck 2x2 Grid </figcaption>
+            </figure>
+             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duck_L2_W64_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> PSNR Plot L2 W64 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duck_L2_W512_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> PSNR Plot L2 W512 </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duck_L16_W64_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> PSNR Plot L16 W64 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duck_L16_W512_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> PSNR Plot L16 W512 </figcaption>
+              </figure>
+            </div>
+            
           </div>
         </div>
       </div>
