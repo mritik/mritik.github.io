@@ -396,7 +396,7 @@
                 <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Ray Visualization - One Image </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./2.3AllCameras.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <img src="./2.3RaysVisualized.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Ray Visualization - All Images </figcaption>
               </figure>
             </div>
@@ -467,67 +467,51 @@
           <div class="content">
             <div class="title">Training with your own data</div>
             <p class="desc">
-              In this part, I built a seamless mosaic by registering and blending two overlapping images using a computed homography. 
-              I began by warping the second image into the coordinate system of the reference image so that their overlapping regions aligned geometrically on a shared canvas. 
-              To determine the proper output size, I projected all image corners through their homographies and used the resulting bounding box to create a canvas large enough to contain both warped images. 
-              I then applied a translation matrix to shift all coordinates into positive space, ensuring that every pixel from both images was visible.
-              <br>
-              For blending, I first implemented feathered averaging, where I created smooth alpha masks from the distance transform of valid pixels. 
-              These masks assign high weights to the center of each image and gradually fade toward the edges, which allows overlapping regions to transition softly instead of forming sharp seams. 
-              To further improve visual quality, I extended this approach with a two-level Laplacian pyramid blend. 
-              This method separates each warped image into low-frequency (color and illumination) and high-frequency (edges and textures) components, blends them separately using feathered masks, and then recombines them.
-              <br>
-              This multi-band approach effectively preserves detail while minimizing brightness differences and ghosting near high-contrast boundaries. 
-              The resulting mosaics demonstrate smooth blending, sharp edges, and consistent exposure between overlapping areas, producing a visually coherent mosaic.
-            </p>
+              Finally, the culmination of all the work in this project.
+              In this part, I train a NeRF model on my own data that I captured with my Apple iPhone 14. The model architecture is identical to the previous part but I did change some of the hyperparameters.
+              
+              Originally, I trained for 5000 steps with num_samples = 32 due to compute restrictions. Later, I trained the model further with 4000 more steps and num_samples = 64.
+              My final hyperparameters are as follows: num_samples = 64, near = 0.2, far = 0.9, batch_size = 4096, num_cams_per_batch = 4, steps = 9000, and learning rate = 5e-4. 
+              In my plot, you can see where the second run began. Note that there is a slight drop initially but the model recovers quickly.
 
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              The reconstruction could be better at some parts but the dataset was quite limited and missing images from certain angles. I couldn't take images from one side of the duck since the duck would obscure the tag.
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> MLK 1 </figcaption>
+                <img src="./duck_final_view.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Duck Training Step 100</figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> MLK 2 </figcaption>
-              </figure>
-            </div>
-            <figure style="margin:0">
-                <img src="./mosaic_mlk.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> MLK Mosaic </figcaption>
-            </figure>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room 1 </figcaption>
+                <img src="./duck_final_view (2).png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lego Training Step 5000 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Room 2 </figcaption>
+                <img src="./duck_final_view (5).png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Lego Training Step 8000 </figcaption>
               </figure>
             </div>
+            
             <figure style="margin:0">
-                <img src="./mosaic_room.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Room Mosaic </figcaption>
-            </figure>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> TV 1 </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> TV 2 </figcaption>
-              </figure>
-            </div>
-            <figure style="margin:0">
-                <img src="./mosaic_tv.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> TV Mosaic </figcaption>
+                <img src="./duck_train_loss_psnr_9k.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Training Loss and PSNR </figcaption>
             </figure>
 
-            <p class="desc">
-              Most of these mosaics look pretty good with minimal ghosting! The MLK mosaic still needs some more improvement. Although I selected many point correspondences (10-12), I don't think I selected
-              all of them accurately and due to the image's many features and components, there remains some misalignment. 
-            </p>
+            <figure style="margin:0; margin-top:12px">
+              <img src="./duck_orbit_360_obj_fast_2.gif"
+                   alt="Duck orbit 360"
+                   style="border-radius:12px; max-width:100%; display:block;">
+              <figcaption class="desc" style="margin-top:6px">
+                Duck Initial 360 Orbit
+              </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./duck_nerf_mixedpath_fast.gif"
+                   alt="Duck NeRF mixed path"
+                   style="border-radius:12px; max-width:100%; display:block;">
+              <figcaption class="desc" style="margin-top:6px">
+                Duck Final 360 Orbit
+              </figcaption>
+            </figure>
           </div>
         </div>
       </div>
