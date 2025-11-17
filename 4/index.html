@@ -233,35 +233,44 @@
           <div class="content">
             <div class="title">Camera Calibration and 3D Scanning</div>
             <p class="desc">
-              In this part, I took three sets of images with a projective transformation between them. I did this by fixing the center of projection and rotating my phone camera slightly so that
-              around 50-70% of the scene overlapped.
-              Most of these images are of fixed objects and there aren't many moving components. You can find the three pairs of images below:
+              In this part, we calibrate the camera by taking 50 pictures of the tags at varying distances and angles, as well as taking images of an object (my duck) from varying angles.
+              I then undistorted the object pictures and packaged them as an npz to train my NeRF later.
+              Below, you can see the cloud of cameras visualized with Viser as well as some original and undistorted images. 
+              Note that there isn't that significant a difference between the originals and the undisorted counterparts since my phone camera has minimal distortion to begin with.
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./mlk1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Mlk Image 1 </figcaption>
+                <img src="./PosesVisualized1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Camera Frustums 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./mlk2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Mlk Image 2 </figcaption>
+                <img src="./PosesVisualized2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Camera Frustums 2 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./room1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Room Image 1 </figcaption>
+                <img src="./IMG_7521u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Duck Undistorted 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./room2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Room Image 2 </figcaption>
+                <img src="./IMG_7521.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck Original 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./tv1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> TV Image 1 </figcaption>
+                <img src="./IMG_7525u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./tv2.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> TV Image 2 </figcaption>
+                <img src="./IMG_7525.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7560u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 3 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7560.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 3 </figcaption>
               </figure>
             </div>
           </div>
