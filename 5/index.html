@@ -201,24 +201,24 @@
           <div class="content">
             <div class="title">What’s on this page</div>
             <ul class="desc">
-              <li>Part A 1.1 - Implementing the Forward Process </li>
-              <li>Part A 1.2 - Classical Denoising</li>
-              <li>Part A 1.3 - One-Step Denoising </li>
-              <li>Part A 1.4 — Iterative Denoising </li>
-              <li>Part A 1.5 - Diffusion Model Sampling </li>
-              <li>Part A 1.6 — Classifier-Free Guidance (CFG) </li>
-              <li>Part A 1.7 - Image-to-image Translation </li>
-              <li>Part A 1.8 — Visual Anagrams </li>
-              <li>Part A 1.9 — Hybrid Images </li>
+              <li>Part A: 0 and 1.1 - Implementing the Forward Process </li>
+              <li>Part A: 1.2 - Classical Denoising</li>
+              <li>Part A: 1.3 - One-Step Denoising </li>
+              <li>Part A: 1.4 — Iterative Denoising </li>
+              <li>Part A: 1.5 - Diffusion Model Sampling </li>
+              <li>Part A: 1.6 — Classifier-Free Guidance (CFG) </li>
+              <li>Part A: 1.7 - Image-to-image Translation </li>
+              <li>Part A: 1.8 — Visual Anagrams </li>
+              <li>Part A: 1.9 — Hybrid Images </li>
 
-              <li>Part B 1.1 — Implementing the UNet </li>
-              <li>Part B 1.2 - Using the UNet to Train a Denoiser </li>
-              <li>Part B 2.1 — Adding Time Conditioning to UNet </li>
-              <li>Part B 2.2 — Training the UNet </li>
-              <li>Part B 2.3 — Sampling from the UNet </li>
-              <li>Part B 2.4 — Adding Class-Conditioning to UNet </li>
-              <li>Part B 2.5 — Training the UNet </li>
-              <li>Part B 2.6 — Sampling from the UNet </li>
+              <li>Part B: 1.1 — Implementing the UNet </li>
+              <li>Part B: 1.2 - Using the UNet to Train a Denoiser </li>
+              <li>Part B: 2.1 — Adding Time Conditioning to UNet </li>
+              <li>Part B: 2.2 — Training the UNet </li>
+              <li>Part B: 2.3 — Sampling from the UNet </li>
+              <li>Part B: 2.4 — Adding Class-Conditioning to UNet </li>
+              <li>Part B: 2.5 — Training the UNet </li>
+              <li>Part B: 2.6 — Sampling from the UNet </li>
             </ul>
           </div>
         </div>
@@ -239,52 +239,74 @@
       </div>
     </section>
 
-    <!-- Part 0
+    <!-- Part A -->
     <section style="margin-top:14px">
       <div class="grid">
         <div class="card" style="grid-column: span 12">
-          <div class="thumb"><span class="badge">Part 0</span></div>
+          <div class="thumb"><span class="badge">Part A: 0 and 1.1</span></div>
           <div class="content">
-            <div class="title">Camera Calibration and 3D Scanning</div>
+            <div class="title">Text Prompts + Implementing the Forward Process</div>
             <p class="desc">
-              In this part, we calibrate the camera by taking 50 pictures of the tags at varying distances and angles, as well as taking images of an object (my duck) from varying angles.
-              I then undistorted the object pictures and packaged them as an npz to train my NeRF later.
-              Below, you can see the cloud of cameras visualized with Viser as well as some original and undistorted images. 
-              Note that there isn't that significant a difference between the originals and the undisorted counterparts since my phone camera has minimal distortion to begin with.
+              In this part, I came up with some text prompts and generated their embeddings. Here are some of my prompts: 'an oil painting of a snowy mountain village', 'a photo of a Santorini beach',
+              'a photo of an old man', 'a photo of a shiba', 'a lithograph of waterfalls', 'a lithograph of a skull', 'an oil painting of a campfire with smoke', 'an oil painting of a waterfall coming out of a cave',
+              'a portrait of a bearded old man', 'a portrait of a rabbit', 'a photo of a blue human eye', 'a photo of a spiral galaxy in space', 'a photo of a full moon',  'close-up of a tiger’s face, straight on, filling the frame',
+              and 'close-up of an orange tabby cat’s face, straight on, slightly blurred'. 
+
+              I used random seed 26 throughout my code. Below, I'll present the initial images generated for three of my prompts at two different num_inference_steps.
+              We have "a portrait of a rabbit", "a view inside a deep dark cave", and "a photo of a blue human eye" at both 20 steps and 100 steps. 
             </p>
 
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
               <figure style="margin:0">
-                <img src="./PosesVisualized1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Camera Frustums 1 </figcaption>
+                <img src="./rabbit_20steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Rabbit 20 Steps </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./PosesVisualized2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Camera Frustums 2 </figcaption>
+                <img src="./darkcave_20steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Cave 20 Steps </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7521u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Duck Undistorted 1 </figcaption>
+                <img src="./blueeye_20steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Eye 20 Steps </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7521.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck Original 1 </figcaption>
+                <img src="./rabbit_100steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Rabbit 100 Steps </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7525u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 1 </figcaption>
+                <img src="./darkcave_100steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Cave 100 Steps </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7525.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 2 </figcaption>
+                <img src="./blueeye_100steps.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Eye 100 Steps </figcaption>
+              </figure>
+            </div>
+            <p>
+            We can see that increasing the number of inference steps generally improved detail across the three prompts. With 20 steps, the images captured the general idea, but some parts
+            look blurry or stylized in unintended ways. The rabbit has some exaggerated colors and the blue eye has strange artifacts.
+            At 100 steps, the outputs became more clear and shapes were better defined, however, there were still some issues. In fact, for some of the prompts having more steps seemed to make the generated image worse
+            since it felt "hyper-realistic" such as for the rabbit. This led me to realize that we likely want a different number of inference steps based on the prompt and its complexity.
+            </p>
+
+            <p> Next, I implement the forward process of diffusion and show the results on the test Campanile image at three noise levels: 250, 500, 750. </p>
+
+            <figure style="margin:0">
+                <img src="./OriginalCampanile.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile Original </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./1.1Im250.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile 250 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7560u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 3 </figcaption>
+                <img src="./1.1Im500.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Campanile 500 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./IMG_7560.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 3 </figcaption>
+                <img src="./1.1Im750.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Campanile 750 </figcaption>
               </figure>
             </div>
           </div>
@@ -292,7 +314,65 @@
       </div>
     </section>
 
-    -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A: 1.2</span></div>
+          <div class="content">
+            <div class="title">Classical Denoising</div>
+            <p class="desc">
+              In this part, I attempt to denoise the noisy campanile images using Gaussian blur filtering. We can see that the results aren't stellar, especially at the higher noise levels.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./1.2_250.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile 250 Denoised </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./1.2_500.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Campanile 500 Denoised </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./1.2_750.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Campanile 750 Denoised </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A: 1.3</span></div>
+          <div class="content">
+            <div class="title">One-Step Denoising</div>
+            <p class="desc">
+              In this part, I attempt to denoise the campanile images by estimating the noise using stage_1.unet and subtracting it with the formula: (Noisy Image - sqrt(1-alpha) * Noise) / sqrt(alpha).
+              Below, you can see the original, noisy and denoised images for the three noise levels. We can see that the results are much better across all three noise levels.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./1.3_250.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile 250 Denoised </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./1.3_500.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Campanile 500 Denoised </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./1.3_750.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Campanile 750 Denoised </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Part 1
     <section style="margin-top:14px">
       <div class="grid">
