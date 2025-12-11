@@ -613,6 +613,66 @@
       </div>
     </section>
 
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A: 1.8</span></div>
+          <div class="content">
+            <div class="title">Visual Anagrams</div>
+            <p class="desc">
+              In this part, I attempt to create visual anagrams with diffusion models. In every denoising step, I predict the noise of the image based on the first prompt along with the flipped noise based on the second prompt.
+              My implementation follows the formulae below and I present two results. The first image is 'a portrait of a bearded old man' + 'a portrait of a rabbit', and the second image is
+              'a cave with sand' + 'a photo of a Santorini beach'.
+            </p>
+            <figure style="margin:0">
+                <img src="./VisualAnagramsFormula.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Visual Anagrams Formulae </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./1.8VisualAnagram1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Old Man + Rabbit</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./1.8VisualAnagram2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Cave + Beach </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part A: 1.9</span></div>
+          <div class="content">
+            <div class="title">Hybrid Images</div>
+            <p class="desc">
+              In this part, I implement Factorized Diffusion and create hybrid images. We predict noise in the low and high frequency domains and then sum them to get the final noise.
+              Below are the formulae I used as well as two results. The first image used prompts "pencil" (low freq) and "rocketship" (high freq) and the second image used prompts 
+              "a lithograph of a skull" (low freq) and "a lithograph of waterfalls" (high freq). 
+            </p>
+            <figure style="margin:0">
+                <img src="./HybridImagesFormula.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Hybrid Images Formulae </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./HybridImage1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Pencil + Rocketship</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./HybridImage2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Skull + Waterfalls </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Part 1
     <section style="margin-top:14px">
       <div class="grid">
