@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 • Project 5 — Chris Dodla</title>
+  <meta name="description" content="Project 5: Diffusion Models and Flow Matching" />
+
+  <!-- Apply saved theme before CSS to avoid mismatch/flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ---------- Theme ---------- */
+    :root {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+
+    /* System preference */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f8fb;
+        --bg-soft: #fff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #335dff;
+        --accent-2: #0fb99d;
+        --ring: rgba(51,93,255,.35);
+        --shadow: 0 10px 24px rgba(2,6,23,.08);
+      }
+    }
+
+    /* Manual overrides (must be AFTER the media block) */
+    :root[data-theme="dark"] {
+      --bg: #0b0c10;
+      --bg-soft: #111218;
+      --card: #151823;
+      --text: #e8eaf0;
+      --muted: #a7b0c0;
+      --accent: #7c9cff;
+      --accent-2: #4de1c1;
+      --ring: rgba(124,156,255,.5);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f7f8fb;
+      --bg-soft: #fff;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #335dff;
+      --accent-2: #0fb99d;
+      --ring: rgba(51,93,255,.35);
+      --shadow: 0 10px 24px rgba(2,6,23,.08);
+    }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(124,156,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg-soft), var(--bg));
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 24px; }
+
+    /* ---------- Header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px; }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 10px 14px; border-radius: 12px; font-weight: 600;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .btn:hover { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white; border: 0; box-shadow: 0 10px 20px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* ---------- Hero ---------- */
+    .hero { display: grid; gap: 18px; padding: 36px 0 18px; }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase;
+      background: color-mix(in oklab, var(--text) 8%, transparent);
+      color: var(--muted);
+      width: fit-content;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+    .sub { color: var(--muted); max-width: 70ch; font-size: 16px; line-height: 1.6; }
+
+    /* ---------- Grid & Cards ---------- */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card {
+      grid-column: span 12;
+      display: grid; grid-template-rows: 160px auto; border-radius: var(--radius);
+      background: var(--card); overflow: hidden; box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+      box-shadow: 0 16px 36px color-mix(in oklab, black 25%, transparent);
+    }
+    .thumb {
+      position: relative;
+      background: linear-gradient(135deg,
+        color-mix(in oklab, var(--accent) 30%, transparent),
+        color-mix(in oklab, var(--accent-2) 22%, transparent));
+      display: grid; place-items: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 999px;
+      background: color-mix(in oklab, var(--bg) 40%, transparent); color: var(--text);
+      border: 1px solid color-mix(in oklab, var(--text) 18%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .content { padding: 14px 14px 16px; display: grid; gap: 8px; }
+    .title { font-weight: 750; font-size: 18px; }
+    .desc { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px dashed color-mix(in oklab, var(--text) 18%, transparent); padding: 4px 8px; border-radius: 999px; }
+
+    @media (min-width: 640px) { .card { grid-column: span 6; } }
+    @media (min-width: 1024px) { .card { grid-column: span 4; } }
+
+    /* ---------- Footer ---------- */
+    footer { margin-top: 36px; padding: 24px 0; color: var(--muted);
+      border-top: 1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size: 14px; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>CS180 Portfolio</span>
+      </div>
+      <nav class="nav-links">
+        <a class="btn" href="../">← Back</a>
+        <button id="themeToggle" class="btn" type="button" aria-label="Toggle theme">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" aria-labelledby="title">
+      <span class="eyebrow">Project 5 • CS180</span>
+      <h1 id="title">Diffusion Models and Flow Matching</h1>
+    </section>
+
+    <!-- Overview / Deliverables -->
+    <section style="margin-top:10px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Overview</span></div>
+          <div class="content">
+            <div class="title">What’s on this page</div>
+            <ul class="desc">
+              <li>Part A 1.1 - Implementing the Forward Process </li>
+              <li>Part A 1.2 - Classical Denoising</li>
+              <li>Part A 1.3 - One-Step Denoising </li>
+              <li>Part A 1.4 — Iterative Denoising </li>
+              <li>Part A 1.5 - Diffusion Model Sampling </li>
+              <li>Part A 1.6 — Classifier-Free Guidance (CFG) </li>
+              <li>Part A 1.7 - Image-to-image Translation </li>
+              <li>Part A 1.8 — Visual Anagrams </li>
+              <li>Part A 1.9 — Hybrid Images </li>
+
+              <li>Part B 1.1 — Implementing the UNet </li>
+              <li>Part B 1.2 - Using the UNet to Train a Denoiser </li>
+              <li>Part B 2.1 — Adding Time Conditioning to UNet </li>
+              <li>Part B 2.2 — Training the UNet </li>
+              <li>Part B 2.3 — Sampling from the UNet </li>
+              <li>Part B 2.4 — Adding Class-Conditioning to UNet </li>
+              <li>Part B 2.5 — Training the UNet </li>
+              <li>Part B 2.6 — Sampling from the UNet </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro -->
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Introduction</span></div>
+          <div class="content">
+            <div class="title">Intro</div>
+            <p class="desc">
+              In this project, I attempt to experiment with diffusion models to generate a variety of images (Part A) and train a flow matching model on the MNIST dataset (Part B).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 0
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 0</span></div>
+          <div class="content">
+            <div class="title">Camera Calibration and 3D Scanning</div>
+            <p class="desc">
+              In this part, we calibrate the camera by taking 50 pictures of the tags at varying distances and angles, as well as taking images of an object (my duck) from varying angles.
+              I then undistorted the object pictures and packaged them as an npz to train my NeRF later.
+              Below, you can see the cloud of cameras visualized with Viser as well as some original and undistorted images. 
+              Note that there isn't that significant a difference between the originals and the undisorted counterparts since my phone camera has minimal distortion to begin with.
+            </p>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./PosesVisualized1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Camera Frustums 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./PosesVisualized2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Camera Frustums 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7521u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Duck Undistorted 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7521.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck Original 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7525u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 1 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7525.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 2 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7560u.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Duck Undistorted 3 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./IMG_7560.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Duck Original 3 </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    -->
+    <!-- Part 1
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 1</span></div>
+          <div class="content">
+            <div class="title">Fit a Neural Field to a 2D Image</div>
+            <p class="desc">
+              In this part, I fit a neural field to a single RGB image. I normalize pixel values and for each pixel, 
+              I create normalized x and y coordinates and apply a positional encoding with 10 frequency bands using sine and cosine functions. 
+              These encoded coordinates are then fed into a multilayer perceptron (MLP).
+
+              The MLP has 4 hidden layers with width 256, each followed by a ReLU activation, and a final linear layer that outputs 3 channels with a sigmoid. 
+              I train the model with the Adam optimizer (learning rate 0.01), minimizing mean squared error between predicted and ground truth colors, and using random batches of 10,000 pixels for 3,000 steps.
+
+              During training, I logged the batch MSE and corresponding PSNR values (computed as 10 * log10(1 / MSE)) every 100 steps. Below, I show plots for these as well as the intermediate images and final reconstructed image. 
+            </p>
+
+            
+            <figure style="margin:0">
+              <img src="./1Img.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Fox Image </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./1Img_checkpoints.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Checkpoints and Reconstructed Fox Image </figcaption>
+            </figure>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./1Img_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Fox PSNR Plot </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./1Img_mse_curve.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Fox MSE Plot </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              I repeated this process for another image of my choice (from my dataset).
+            </p>
+           
+            <figure style="margin:0">
+              <img src="./duckImgP1.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Duck Image </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./duckImgP1_checkpoints.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Reconstructed Duck Image </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duckImgP1_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Duck PSNR Plot </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duckImgP1_mse.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Duck MSE Plot </figcaption>
+              </figure>
+            </div>
+
+            <p class="desc">
+              In addition, I trained with varying choices of max positional encoding frequency and width. I had 2 choices of each and below, you can see a 2x2 grid of the results along with the PSNR plots.
+              I varied frequency between 2 and 16 and I varied width between 64 and 512. The best results seem to come from frequency 16 and width 64, whereas frequency 2 + width 64 and frequency 16 + width 512 are the worst.
+            </p>
+            <figure style="margin:0">
+                  <img src="./Part1Grid.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Duck 2x2 Grid </figcaption>
+            </figure>
+             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duck_L2_W64_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> PSNR Plot L2 W64 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duck_L2_W512_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> PSNR Plot L2 W512 </figcaption>
+              </figure>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                  <img src="./duck_L16_W64_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> PSNR Plot L16 W64 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                  <img src="./duck_L16_W512_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                  <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> PSNR Plot L16 W512 </figcaption>
+              </figure>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+    -->
+    <!-- Part 2.1-2.5
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.1-2.5</span></div>
+          <div class="content">
+            <div class="title">Fit a Neural Radiance Field from Multi-view Images</div>
+              <p class="desc">
+                In part 2.1, I wrote helpers to move between pixel, camera, and world coordinates. 
+                I first built a generic transform function that takes 3D points, turns them into homogeneous coordinates, and applies a 4x4 matrix. 
+                Using the camera intrinsics, I then back-project pixels at a given depth into camera space and finally convert those to world-space rays by transforming them with the camera-to-world matrix and normalizing their directions.
+                In part 2.2, I write a helper that randomly samples rays from multiple training images and converts their pixels into ray origins, directions, and RGB targets. I also sample 3D points along each ray between near and far planes for volumetric rendering. 
+                In part 2.3, I wrapped the ray sampling logic into a RaysData class that precomputes per-pixel rays for all training images and lets me draw random ray batches on demand. 
+                I then used Viser to visualize the scene: I render the camera frustums, a set of sampled rays, and points along those rays in 3D to sanity-check that my ray geometry and sampling behave as expected. You can see the results of this below:
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./2.3SingleCamera.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Ray Visualization - One Image </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./2.3RaysVisualized.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Ray Visualization - All Images </figcaption>
+              </figure>
+            </div>
+            <p class="desc">
+              In part 2.4, To reconstruct a 3D scene, I built a NeRF-style network that takes 3D points and viewing directions, applies positional encoding to each, and feeds them through a shared position trunk with a skip connection so high-frequency details are preserved. 
+              From this trunk I predict a density value and a feature vector; I pass the density through a softplus layer (plus a small epsilon) so it is always positive and smoothly varying, which is important for stable volume rendering. 
+              I then concatenate the feature with the encoded viewing direction and run it through a small color MLP to model view-dependent appearance, and use a final sigmoid.
+
+              In part 2.5, I implement a volume rendering function and put everything together. Given per-sample densities and colors along each ray, I compute transmittance and alpha values, 
+              form weights for each point, and take a weighted sum of the colors using torch.cumsum to get the final RGB for the ray. 
+              I then ran a small sanity check that compares my output to a precomputed “correct” result to confirm the implementation is accurate.
+            </p>
+
+            <p class="desc">
+              Below, I will show the results of training my NeRF model on the lego truck data.
+              I will provide training progression visualization, a PSNR curve on a validation set and a spherical rendering video of the lego truck. 
+              I trained for 1500 steps and achieved 24.24 dB average PSNR on the validation set.
+            </p>
+
+            <figure style="margin:0">
+                <img src="./ImagesVisualized2.5.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Training Progression </figcaption>
+            </figure>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./lego_val_pred_step100.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lego Training Step 100</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./lego_val_pred_step500.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Lego Training Step 500 </figcaption>
+              </figure>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./lego_val_pred_step1000.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Lego Training Step 1000 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./lego_val_pred_step1500.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Lego Training Step 1500 </figcaption>
+              </figure>
+            </div>
+
+            <figure style="margin:0">
+                <img src="./lego_validation_psnr.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Validation PSNR Curve </figcaption>
+            </figure>
+
+            <figure style="margin:0">
+                <video controls style="border-radius:12px; width:100%; display:block;">
+                  <source src="./lego_nerf_spherical(2.5).mp4" type="video/mp4">
+                </video>
+                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> Spherical Rendering </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+    -->
+    <!-- Part 2.6
+    <section style="margin-top:14px">
+      <div class="grid">
+        <div class="card" style="grid-column: span 12">
+          <div class="thumb"><span class="badge">Part 2.6</span></div>
+          <div class="content">
+            <div class="title">Training with your own data</div>
+            <p class="desc">
+              Finally, the culmination of all the work in this project.
+              In this part, I train a NeRF model on my own data that I captured with my Apple iPhone 14. The model architecture is identical to the previous part but I did change some of the hyperparameters.
+              
+              Originally, I trained for 5000 steps with num_samples = 32 due to compute restrictions. Later, I trained the model further with 4000 more steps and num_samples = 64.
+              My final hyperparameters are as follows: num_samples = 64, near = 0.2, far = 0.9, batch_size = 4096, num_cams_per_batch = 4, steps = 9000, and learning rate = 5e-4. 
+              In my plot, you can see where the second run began. Note that there is a slight drop initially but the model recovers quickly.
+
+              The reconstruction could be better at some parts but the dataset was quite limited and missing images from certain angles. I couldn't take images from one side of the duck since the duck would obscure the tag.
+              However, I'm confident that with some more training, the model will improve further since it didn't show any signs of converging. 
+            </p>
+
+            <figure style="margin:0">
+                <img src="./OriginalDuck.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Original Reference Image </figcaption>
+            </figure>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
+              <figure style="margin:0">
+                <img src="./duck_final_view.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Duck Training Step 100</figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./duck_final_view (2).png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Lego Training Step 5000 </figcaption>
+              </figure>
+              <figure style="margin:0">
+                <img src="./duck_final_view (5).png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Lego Training Step 8000 </figcaption>
+              </figure>
+            </div>
+            
+            <figure style="margin:0">
+                <img src="./duck_train_loss_psnr_9k.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Training Loss and PSNR </figcaption>
+            </figure>
+
+            <figure style="margin:0; margin-top:12px">
+              <img src="./duck_orbit_360_obj_fast (2).gif"
+                   alt="Duck orbit 360"
+                   style="border-radius:12px; max-width:100%; display:block;">
+              <figcaption class="desc" style="margin-top:6px">
+                Duck Initial 360 Orbit
+              </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./duck_nerf_mixedpath_fast.gif"
+                   alt="Duck NeRF mixed path"
+                   style="border-radius:12px; max-width:100%; display:block;">
+              <figcaption class="desc" style="margin-top:6px">
+                Duck Final 360 Orbit
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+    --->
+    <footer>
+      <div class="footer-row container">
+        <span>© <span id="year"></span> Chris Dodla</span>
+        <span>Project 5 • CS180 @ https://mritik.github.io/5/</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const key = "theme";
+      const root = document.documentElement;
+      const saved = localStorage.getItem(key);
+      if (saved) root.setAttribute("data-theme", saved);
+
+      const btn = document.getElementById("themeToggle");
+      btn.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(key, next);
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
