@@ -524,20 +524,18 @@
               Afterwards, I apply the same process to two of my own images.
             </p>
 
-            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./1.7Campanile.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile SDE Edit </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7OwnImg1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bird SDE Edit </figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7OwnImg2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Guy SDE Edit </figcaption>
-              </figure>
-            </div>
+            <figure style="margin:0">
+              <img src="./1.7Campanile.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile SDE Edit </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./1.7OwnImg1.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bird SDE Edit </figcaption>
+            </figure>
+            <figure style="margin:0">
+              <img src="./1.7OwnImg2.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+              <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Guy SDE Edit </figcaption>
+            </figure>
 
             <p class="desc">
               1.7.1: I repeated this process with images from the web and ones I had drawn myself. Below are three examples.
@@ -549,7 +547,7 @@
                 <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Web Image </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./1.7.1WebImgEdits.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <img src="./1.7.1WebImgEdits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Web Image SDE Edit </figcaption>
               </figure>
               <figure style="margin:0">
@@ -557,7 +555,7 @@
                 <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Original Handdrawn Image1 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./1.7.1HandImg1Edits.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <img src="./1.7.1HandImg1Edits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> Handdrawn Image1 SDE Edit </figcaption>
               </figure>
               <figure style="margin:0">
@@ -565,7 +563,7 @@
                 <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> Original Handdrawn Image2 </figcaption>
               </figure>
               <figure style="margin:0">
-                <img src="./1.7.1HandImg2Edits.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <img src="./1.7.1HandImg2Edits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> Handdrawn Image2 SDE Edit </figcaption>
               </figure>
             </div>
@@ -574,40 +572,36 @@
             1.7.2: Next, I implemented inpainting. We do this by repeatedly denoising, leaving the inside of the mask alone and replacing everything outside the mask with our original image.
             This ensures that we are only diffusing the masked area and leaving the rest unchanged. Below are three examples, with the campanile and two of my own images.
           </p>
-          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./1.7.2Campanile.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile Inpainted</figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7.2MyImg1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Rabbit with Dog Face Inpainted</figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7.2MyImg2Redo.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Eye with Moon Inpainted </figcaption>
-              </figure>
-          </div>
+          <figure style="margin:0">
+            <img src="./1.7.2Campanile.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile Inpainted</figcaption>
+          </figure>
+          <figure style="margin:0">
+            <img src="./1.7.2MyImg1.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Rabbit with Dog Face Inpainted</figcaption>
+          </figure>
+          <figure style="margin:0">
+            <img src="./1.7.2MyImg2Redo.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Eye with Moon Inpainted </figcaption>
+          </figure>
 
           <p class="desc">
             1.7.3: Next, our task is very similar to the first task in this section but now we'll guide the image generation with a prompt. Below we have the Campanile with a rocketship, along with 
             the picture of the man with "photo of an old man" prompt and the picture of the bird with "a portrait of a rabbit" prompt. We can see that the resulting images look like the original image and
             also the prompt!
           </p>
-          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px">
-              <figure style="margin:0">
-                <img src="./1.7.3Campanile.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile + Rocketship Guided SDE</figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7.3MyImg1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bird + Rabbit Guided SDE</figcaption>
-              </figure>
-              <figure style="margin:0">
-                <img src="./1.7.3MyImg2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Guy + Old Man Guided SDE </figcaption>
-              </figure>
-          </div>
+          <figure style="margin:0">
+            <img src="./1.7.3Campanile.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>1.</strong> Campanile + Rocketship Guided SDE</figcaption>
+          </figure>
+          <figure style="margin:0">
+            <img src="./1.7.3MyImg1.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>2.</strong> Bird + Rabbit Guided SDE</figcaption>
+          </figure>
+          <figure style="margin:0">
+            <img src="./1.7.3MyImg2.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
+            <figcaption class="desc" style="margin-top:6px"><strong>3.</strong> Guy + Old Man Guided SDE </figcaption>
+          </figure>
             
           </div>
         </div>
@@ -721,7 +715,7 @@
               1.2.2: I attempted to test my model's performance on out-of-distribution data (images at noise levels other than 0.5). We see that denoising performance drops at higher noise levels since the model isn't trained at those levels.
             </p>
             <figure style="margin:0">
-                <img src="./1.2.2Samples.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
+                <img src="./1.2.2Samples.png" alt="" style="border-radius:12px, width:300px; height:300px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> OOD Samples </figcaption>
             </figure>
 
