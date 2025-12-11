@@ -541,30 +541,70 @@
               1.7.1: I repeated this process with images from the web and ones I had drawn myself. Below are three examples.
             </p>
 
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px">
+            <div style="
+              display: grid;
+              grid-template-columns: 1fr 1.7fr;  /* right column wider */
+              gap: 12px;
+              margin-top: 8px;
+            ">
               <figure style="margin:0">
-                <img src="./1.7.1WebImg.jpg" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>4.</strong> Original Web Image </figcaption>
+                <img src="./1.7.1WebImg.jpg"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>4.</strong> Original Web Image
+                </figcaption>
               </figure>
+            
               <figure style="margin:0">
-                <img src="./1.7.1WebImgEdits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> Web Image SDE Edit </figcaption>
+                <img src="./1.7.1WebImgEdits.png"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>5.</strong> Web Image SDE Edit
+                </figcaption>
               </figure>
+            
               <figure style="margin:0">
-                <img src="./1.7.1HandImg1.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>6.</strong> Original Handdrawn Image1 </figcaption>
+                <img src="./1.7.1HandImg1.png"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>6.</strong> Original Handdrawn Image1
+                </figcaption>
               </figure>
+            
               <figure style="margin:0">
-                <img src="./1.7.1HandImg1Edits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>7.</strong> Handdrawn Image1 SDE Edit </figcaption>
+                <img src="./1.7.1HandImg1Edits.png"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>7.</strong> Handdrawn Image1 SDE Edit
+                </figcaption>
               </figure>
+            
               <figure style="margin:0">
-                <img src="./1.7.1HandImg2.png" alt="" style="border-radius:12px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>8.</strong> Original Handdrawn Image2 </figcaption>
+                <img src="./1.7.1HandImg2.png"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>8.</strong> Original Handdrawn Image2
+                </figcaption>
               </figure>
+            
               <figure style="margin:0">
-                <img src="./1.7.1HandImg2Edits.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
-                <figcaption class="desc" style="margin-top:6px"><strong>9.</strong> Handdrawn Image2 SDE Edit </figcaption>
+                <img src="./1.7.1HandImg2Edits.png"
+                     alt=""
+                     style="border-radius:12px; width:100%; height:auto;"
+                     onerror="this.style.display='none'">
+                <figcaption class="desc" style="margin-top:6px">
+                  <strong>9.</strong> Handdrawn Image2 SDE Edit
+                </figcaption>
               </figure>
             </div>
 
@@ -715,7 +755,7 @@
               1.2.2: I attempted to test my model's performance on out-of-distribution data (images at noise levels other than 0.5). We see that denoising performance drops at higher noise levels since the model isn't trained at those levels.
             </p>
             <figure style="margin:0">
-                <img src="./1.2.2Samples.png" alt="" style="border-radius:12px, width:300px; height:300px" onerror="this.style.display='none'">
+                <img src="./1.2.2Samples.png" alt="" style="border-radius:12px, width:600px; height:300px" onerror="this.style.display='none'">
                 <figcaption class="desc" style="margin-top:6px"><strong>5.</strong> OOD Samples </figcaption>
             </figure>
 
